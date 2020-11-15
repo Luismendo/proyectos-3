@@ -8,7 +8,7 @@ url_page = 'http://www.bolsamadrid.es/esp/aspx/Indices/Resumen.aspx'
 
 # tarda 480 milisegundos
 page = requests.get(url_page).text 
-soup = BeautifulSoup(page, "lxml")
+soup = BeautifulSoup(page, "html5lib")
 
 # Obtenemos la tabla por un ID específico
 tabla = soup.find('table', attrs={'id': 'ctl00_Contenido_tblÍndices'})
