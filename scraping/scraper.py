@@ -13,12 +13,12 @@ soup = BeautifulSoup(page, "html5lib")
 # Obtenemos la tabla por un ID específico
 tabla = soup.find('table', attrs={'id': 'ctl00_Contenido_tblÍndices'})
 
-name=""
-price=""
 json=list()
 for fila in tabla.find_all("tr"):
     nroCelda=0
-    
+    name = None
+    price = None
+
     for celda in fila.find_all('td'):
         if nroCelda==0:
             name=celda.text
@@ -28,9 +28,10 @@ for fila in tabla.find_all("tr"):
             price=float(price)
         nroCelda=nroCelda+1
     
-    json.append({
-        'name': name,
-        'price': price
-    })
+    if name and price:
+        json.append({
+            'name': name,
+            'price': price
+        })
 
 print(f"{json}")
