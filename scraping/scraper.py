@@ -15,14 +15,22 @@ tabla = soup.find('table', attrs={'id': 'ctl00_Contenido_tblÍndices'})
 
 name=""
 price=""
-nroFila=0
+json=list()
 for fila in tabla.find_all("tr"):
     nroCelda=0
+    
     for celda in fila.find_all('td'):
         if nroCelda==0:
             name=celda.text
-            print("Indice:", name)
-        if nroCelda==2:
+        elif nroCelda==2:
             price=celda.text
-            print("Valor:", price)
+            price=price.replace('.', '').replace(',', '.')
+            price=float(price)
         nroCelda=nroCelda+1
+    
+    json.append({
+        'name': name,
+        'price': price
+    })
+
+print(f"{json}")
