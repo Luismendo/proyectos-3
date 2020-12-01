@@ -15,23 +15,37 @@ tabla = soup.find('table', attrs={'id': 'ctl00_Contenido_tblÍndices'})
 
 json=list()
 for fila in tabla.find_all("tr"):
-    nroCelda=0
+    cell_num = 0
     name = None
     price = None
+    timestamp = None
 
     for celda in fila.find_all('td'):
-        if nroCelda==0:
-            name=celda.text
-        elif nroCelda==2:
+        if cell_num == 0:
+            name = celda.text
+
+        elif cell_num == 2:
             price=celda.text
             price=price.replace('.', '').replace(',', '.')
             price=float(price)
-        nroCelda=nroCelda+1
-    
+
+        elif cell_num == 6:
+            timestamp = celda.text
+            timestamp += ' '
+        
+        elif cell_num == 7:
+            timestamp += celda.text
+
+        cell_num += 1
+
     if name and price:
-        json.append({
-            'name': name,
-            'price': price
-        })
+        try:
+            json.append({
+                'name': name,
+                'price': price,
+                'timestamp': datetime.strptime(timestamp, r"%d/%m/%Y %H:%M:%S").strftime(r"%Y-%m-%d %H:%M:%S")
+            })
+        except ValueError:
+            pass
 
 print(f"{json}")
