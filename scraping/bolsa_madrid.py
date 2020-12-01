@@ -13,6 +13,8 @@ soup = BeautifulSoup(page, "html5lib")
 # Obtenemos la tabla por un ID específico
 tabla = soup.find('table', attrs={'id': 'ctl00_Contenido_tblÍndices'})
 
+query = "mysql> INSERT INTO Indexes (Name) Values "
+
 json=list()
 for fila in tabla.find_all("tr"):
     cell_num = 0
@@ -37,9 +39,9 @@ for fila in tabla.find_all("tr"):
             timestamp += celda.text
 
         cell_num += 1
-
     if name and price:
         try:
+            query = query + "('"+name+"')"+ ","
             json.append({
                 'name': name,
                 'price': price,
@@ -48,4 +50,6 @@ for fila in tabla.find_all("tr"):
         except ValueError:
             pass
 
-print(f"{json}")
+#print(f"{json}")
+query = query + ";"
+print(query)
