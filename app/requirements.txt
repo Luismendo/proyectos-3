@@ -1,0 +1,6 @@
+bs4  # BeautifulSoup
+flask
+flask_bcrypt
+flask_sqlalchemy
+html5lib
+mysql-connector
