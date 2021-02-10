@@ -17,10 +17,10 @@ opiniones = Blueprint('opiniones', __name__, template_folder='../templates')
 
 
 @opiniones.route('/opiniones')
-def opinions_get():
+def get():
     index = request.args.get('index')
     if not index:
-        return redirect(url_for('index'))
+        return redirect(url_for('indexes.get'))
 
     opinions = Opinion.query.filter_by(company=index).all()
 
@@ -71,7 +71,7 @@ def fetch_opinions(name):
 
 
 @opiniones.route('/opiniones/update')
-def opinions_update():
+def update():
     Opinion.query.delete()
     db.session.commit()
 
@@ -92,9 +92,9 @@ def opinions_update():
                 except Exception as ex:
                     print(f"Error storing opinion: {ex}")
 
-    return redirect(url_for('index'))
+    return redirect(url_for('indexes.get'))
 
 
 @opiniones.route('/update_Opinions')
-def opinions_update_legacy():
-    return redirect(url_for('opinions_update'))
+def update_legacy():
+    return redirect(url_for('opinions.update'))

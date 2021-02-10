@@ -17,9 +17,9 @@ noticias = Blueprint('noticias', __name__, template_folder='../templates')
 
 
 @noticias.route('/noticias')
-def noticias_get():
+def get():
     if not g.user:
-        return redirect(url_for('login_get'))
+        return redirect(url_for('auth.login_get'))
 
     titulo, cuerpo, url = [], [], []
     all_noticias = Noticias.query.all()
@@ -32,7 +32,7 @@ def noticias_get():
 
 
 @noticias.route('/noticias/update')
-def noticias_update():
+def update():
     Noticias.query.delete()
     db.session.commit()
 
@@ -71,9 +71,9 @@ def noticias_update():
                 pass
     db.session.commit()
 
-    return redirect(url_for('noticias_get'))
+    return redirect(url_for('noticias.get'))
 
 
 @noticias.route('/update_Noticias')
-def noticias_update_legacy():
-    return redirect(url_for('noticias_update'))
+def update_legacy():
+    return redirect(url_for('noticias.update'))

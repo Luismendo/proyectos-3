@@ -1,7 +1,7 @@
 import config
 import blueprints
 from app import app
-from bcrypt import bcrypt
+from hashing import bcrypt
 from database import db, User
 from flask import (g, session)
 

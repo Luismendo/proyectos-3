@@ -18,9 +18,9 @@ indexes = Blueprint('indexes', __name__, template_folder='../templates')
 
 
 @indexes.route('/')
-def indexes_get():
+def get():
     if not g.user:
-        return redirect(url_for('login_get'))
+        return redirect(url_for('auth.login_get'))
 
     all_idxs = Index.query.filter_by(date=date.today()).all()
 
@@ -41,7 +41,7 @@ def indexes_get():
 
 
 @indexes.route('/indexes/update')
-def indexes_update():
+def update():
     # db.session.query(Index).delete()
     request = urllib.request.Request('https://datosmacro.expansion.com/bolsa')
     request.add_header("User-Agent", "Mozilla/5.0")
@@ -81,9 +81,9 @@ def indexes_update():
                 except ValueError as e:
                     print(f"ValueError on storing index: {e}")
 
-    return redirect(url_for('index'))
+    return redirect(url_for('indexes.get'))
 
 
 @indexes.route('/update_Indexes')
-def indexes_update_legacy():
-    return redirect(url_for('indexes_update'))
+def update_legacy():
+    return redirect(url_for('indexes.update'))
