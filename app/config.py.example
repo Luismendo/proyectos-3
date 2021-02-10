@@ -1,6 +1,7 @@
 DEBUG = False
 
 APP_SECRET = ""
+MARKETSTACK_KEY = ""
 
 DB_USER = ""
 DB_PASS = ""
