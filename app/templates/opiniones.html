@@ -40,7 +40,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('index') }}">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('indexes.get') }}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -100,7 +100,7 @@
                                 <img class="img-profile rounded-circle"
                                     src="static/img/undraw_profile_1.svg">
                             </a>
-                            <button> <a href="{{ url_for('logout') }}">logout</a></button>
+                            <button> <a href="{{ url_for('auth.logout') }}">logout</a></button>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
@@ -178,7 +178,7 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="{{ url_for('logout') }}">Logout</a>
+                    <a class="btn btn-primary" href="{{ url_for('auth.logout') }}">Logout</a>
                 </div>
             </div>
         </div>

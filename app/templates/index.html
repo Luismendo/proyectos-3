@@ -12,7 +12,9 @@
     <title>Proyectos 3 - Dashboard</title>
 
     <!-- Custom fonts for this template-->
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link href="static/index.css" rel="stylesheet">
@@ -37,7 +39,8 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('index') }}">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center"
+                href="{{ url_for('indexes.get') }}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -49,7 +52,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('index') }}">
+                <a class="nav-link" href="{{ url_for('indexes.get') }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -115,8 +118,8 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="{{ url_for('login_get') }}">Login</a>
-                        <a class="collapse-item" href="{{ url_for('signup_get') }}">Register</a>
+                        <a class="collapse-item" href="{{ url_for('auth.login_get') }}">Login</a>
+                        <a class="collapse-item" href="{{ url_for('auth.signup_get') }}">Register</a>
                     </div>
                 </div>
             </li>
@@ -137,7 +140,7 @@
 
             <!-- Nav Item - Noticias -->
             <li class="nav-item">
-                <a class="nav-link" href="/noticias">
+                <a class="nav-link" href="{{ url_for('noticias.get') }}">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Noticias</span></a>
             </li>
@@ -270,8 +273,7 @@
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="static/img/undraw_profile_1.svg"
-                                            alt="">
+                                        <img class="rounded-circle" src="static/img/undraw_profile_1.svg" alt="">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
                                     <div class="font-weight-bold">
@@ -282,8 +284,7 @@
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="static/img/undraw_profile_1.svg"
-                                            alt="">
+                                        <img class="rounded-circle" src="static/img/undraw_profile_1.svg" alt="">
                                         <div class="status-indicator"></div>
                                     </div>
                                     <div>
@@ -294,8 +295,7 @@
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="static/img/undraw_profile_1.svg"
-                                            alt="">
+                                        <img class="rounded-circle" src="static/img/undraw_profile_1.svg" alt="">
                                         <div class="status-indicator bg-warning"></div>
                                     </div>
                                     <div>
@@ -327,11 +327,10 @@
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{g.user.username}}</span>
-                                <img class="img-profile rounded-circle"
-                                    src="static/img/undraw_profile_1.svg">
+                                <img class="img-profile rounded-circle" src="static/img/undraw_profile_1.svg">
                             </a>
-                            <button> <a href="{{ url_for('logout') }}">logout</a></button>
-                            <button> <a href="{{ url_for('noticias_get') }}">Noticias</a></button>
+                            <button> <a href="{{ url_for('auth.logout') }}">logout</a></button>
+                            <button> <a href="{{ url_for('noticias.get') }}">Noticias</a></button>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
@@ -397,121 +396,101 @@
                                 <!-- Card Body -->
                                 <div class="card-body">
                                     <div class="chart-area">
-                                        <canvas class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="myAreaChart"></canvas>
-                                             <script>
-                                              // bar chart data
-                                              var barData = {
-                                                labels : [
-                                                  {% for item in labels %}
-                                                   "{{ item }}",
-                                                  {% endfor %}
-                                        	],
-
-                                                datasets : [{
-                                                  fillColor: "rgba(151,187,205,0.2)",
-                                                  strokeColor: "rgba(151,187,205,1)",
-                                                  pointColor: "rgba(151,187,205,1)",
-                                                  data : [
-                                                    {% for item in values %}
-                                                       "{{ item }}",
-                                                      {% endfor %}
-                                        	    ]
-                                                  }
-                                                ]
-                                              }
-
-                                             // get bar chart canvas
-                                             var mychart = document.getElementById("myAreaChart").getContext("2d");
-                                               steps = 20
-                                               max = {{max}}
-
-                                             // draw bar chart
-                                             new Chart(mychart).Bar(barData, {
-                                               scaleOverride: true,
-                                               scaleSteps: steps,
-                                               scaleStepWidth: Math.ceil(max / steps),
-                                               scaleStartValue: 0,
-                                               scaleShowVerticalLines: true,
-                                               scaleShowGridLines : true,
-                                               barShowStroke : true,
-                                               scaleShowLabels: true
-                                               }
-                                             );
-                                            </script>
+                                        <canvas class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+                                            id="myAreaChart"></canvas>
                                     </div>
                                 </div>
                                 <table id="table" class="table table-dark table-striped table-sm"></table>
+
                                 <script>
+                                    let names = {{ labels | tojson }},
+                                        values = {{ values | tojson }},
+                                        urls = {{ urls | tojson }};
 
-                                let names = {{ labels | tojson }};
+                                    // bar chart data
+                                    var barData = {
+                                        labels: names,
+                                        datasets: [{
+                                            fillColor: "rgba(151,187,205,0.2)",
+                                            strokeColor: "rgba(151,187,205,1)",
+                                            pointColor: "rgba(151,187,205,1)",
+                                            data: values
+                                        }]
+                                    };
 
-                                let values = {{ values | tojson }};
+                                    // get bar chart canvas
+                                    var mychart = document.getElementById("myAreaChart").getContext("2d"),
+                                        steps = 20,
+                                        max = {{ max }};
 
-                                let urls = {{ urls | tojson }};
-
-                                let indexes = []
-
-                                for (i = 0; i < names.length; i++) {
-                                  indexes.push({
-                                        key:   names[i],
-                                        value: values[i],
-                                        urls: urls[i]
+                                    // draw bar chart
+                                    new Chart(mychart).Bar(barData, {
+                                        scaleOverride: true,
+                                        scaleSteps: steps,
+                                        scaleStepWidth: Math.ceil(max / steps),
+                                        scaleStartValue: 0,
+                                        scaleShowVerticalLines: true,
+                                        scaleShowGridLines: true,
+                                        barShowStroke: true,
+                                        scaleShowLabels: true
                                     });
-                                }
 
-                                let myTable = document.querySelector('#table');
 
-                                let headers = ['Name','Value','Link'];
+                                    let indexes = []
+                                    for (i = 0; i < names.length; i++) {
+                                        indexes.push({
+                                            key: names[i],
+                                            value: values[i],
+                                            urls: urls[i]
+                                        });
+                                    }
 
-                                // let table = document.createElement('table');
-                                let table = document.getElementById('table');
-                                let headerRow = document.createElement('tr');
+                                    /*let myTable = document.querySelector('#table'),
+                                        headers = ['Name', 'Value', 'Link'];*/
 
-                                headers.forEach(headerText => {
-                                    let header = document.createElement('th');
-                                    let textNode = document.createTextNode(headerText);
-                                    header.appendChild(textNode);
-                                    headerRow.appendChild(header);
-                                });
+                                    // let table = document.createElement('table');
+                                    let table = document.getElementById('table'),
+                                        headers = ['Name', 'Value', 'Link'],
+                                        headerRow = table.createTHead().insertRow();
 
-                                table.appendChild(headerRow);
+                                    headers.forEach(headerText => {
+                                        let header = document.createElement('th');
+                                        let textNode = document.createTextNode(headerText);
+                                        header.appendChild(textNode);
+                                        headerRow.appendChild(header);
+                                    });
 
-                                var i = 0;
+                                    var i = 0;
+                                    var tableBody = document.createElement('tbody');
+                                    indexes.forEach(emp => {
+                                        let row = tableBody.insertRow();
+                                        var count = 1;
+                                        Object.values(emp).forEach(text => {
+                                            console.log("Text:" + text);
+                                            console.log("Count:" + count);
+                                            if (count == 1) {
+                                                let textNode = document.createTextNode(text),
+                                                    a = document.createElement('a');
+                                                a.appendChild(textNode);
+                                                a.href = "{{ url_for('opiniones.get') }}" + "?index=" + names[i];
+                                                row.insertCell().appendChild(a);
+                                            } else if (count == 3) {
+                                                let textNode = document.createTextNode(text);
+                                                    a = document.createElement('a');
+                                                a.appendChild(textNode);
+                                                a.href = text;
+                                                row.insertCell().appendChild(a);
+                                            } else {
+                                                let textNode = document.createTextNode(text);
+                                                row.insertCell().appendChild(textNode);
+                                            }
+                                            count++;
+                                        });
+                                        table.appendChild(tableBody);
+                                        i++;
+                                    });
 
-                                indexes.forEach(emp => {
-                                    let row = document.createElement('tr');
-                                    var count = 1;
-                                    Object.values(emp).forEach(text => {
-                                        if (count == 1){
-                                            let cell = document.createElement('td');
-                                            let textNode = document.createTextNode(text);
-                                            var a = document.createElement('a');
-                                            a.appendChild(textNode);
-                                            cell.appendChild(a);
-                                            row.appendChild(cell);
-                                            a.href = "{{ url_for('opinions_get') }}" + "?index="+names[i];
-                                        }else if(count ==3){
-                                            let cell = document.createElement('td');
-                                            let textNode = document.createTextNode(text);
-                                            var a = document.createElement('a');
-                                            a.appendChild(textNode);
-                                            cell.appendChild(a);
-                                            row.appendChild(cell);
-                                            a.href = "http://google.es";
-                                        }else{
-                                            let cell = document.createElement('td');
-                                            let textNode = document.createTextNode(text);
-                                            cell.appendChild(textNode);
-                                            row.appendChild(cell);
-                                        }
-                                        count++;
-                                    })
-
-                                    table.appendChild(row);
-                                    i++;
-                                });
-
-                                    myTable.appendChild(table);
+                                    // myTable.appendChild(table);
                                 </script>
                             </div>
                         </div>
@@ -551,7 +530,7 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="{{ url_for('logout') }}">Logout</a>
+                    <a class="btn btn-primary" href="{{ url_for('auth.logout') }}">Logout</a>
                 </div>
             </div>
         </div>
