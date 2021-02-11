@@ -3,3 +3,4 @@ from .indexes import indexes
 from .marketstack import marketstack
 from .noticias import noticias
 from .opiniones import opiniones
+from .profile import profile

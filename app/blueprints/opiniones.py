@@ -1,6 +1,6 @@
 import urllib
 from bs4 import BeautifulSoup
-from database import db, Opinion
+from database import db, Opinion, Index
 from flask import (
     g,
     Blueprint,
@@ -24,7 +24,20 @@ def get():
 
     opinions = Opinion.query.filter_by(company=index).all()
 
-    return render_template('opiniones.html', index=index, opinions=opinions)
+    lastValuesIndex = Index.query.filter_by(name=index) \
+                           .order_by(Index.date.desc()) \
+                           .limit(14)
+
+    lastValues,lastDates = [],[]
+
+    for index in lastValuesIndex:
+        lastValues.append(index.value)
+        lastDates.append(index.date.strftime("%m/%d/%Y"))
+
+    lastValues.reverse()
+    lastDates.reverse()
+
+    return render_template('opiniones.html', index=index.name, opinions=opinions, values=lastValues, dates=lastDates)
 
 
 def fetch_opinions(name):

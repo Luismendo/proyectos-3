@@ -14,6 +14,7 @@ app.register_blueprint(blueprints.indexes)
 app.register_blueprint(blueprints.marketstack)
 app.register_blueprint(blueprints.noticias)
 app.register_blueprint(blueprints.opiniones)
+app.register_blueprint(blueprints.profile)
 
 
 @app.before_request
