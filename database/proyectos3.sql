@@ -6,7 +6,7 @@ CREATE TABLE `indexes_old` (
   `variation` float NOT NULL,
   `date` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4873 DEFAULT CHARSET=utf8 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4873 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 LOCK TABLES `indexes_old` WRITE;
 INSERT INTO `indexes_old` VALUES
@@ -2978,7 +2978,7 @@ CREATE TABLE `noticias` (
   `cuerpo` mediumtext,
   `url` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1016 DEFAULT CHARSET=utf8 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1016 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 LOCK TABLES `noticias` WRITE;
 INSERT INTO `noticias` VALUES
@@ -3028,7 +3028,7 @@ CREATE TABLE `opinions` (
   `body` varchar(500) DEFAULT NULL,
   `page` varchar(550) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=623 DEFAULT CHARSET=utf8 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=623 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 LOCK TABLES `opinions` WRITE;
 INSERT INTO `opinions` VALUES
@@ -3079,7 +3079,7 @@ CREATE TABLE `users` (
   `email` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 LOCK TABLES `users` WRITE;
 INSERT INTO `users` VALUES
@@ -3101,7 +3101,7 @@ CREATE TABLE `data` (
   PRIMARY KEY (`id`),
   KEY `idx_index_timestamp` (`index_id`,`timestamp`),
   CONSTRAINT `fk_index_id` FOREIGN KEY (`index_id`) REFERENCES `indexes` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 DROP TABLE IF EXISTS `indexes`;
@@ -3111,7 +3111,7 @@ CREATE TABLE `indexes` (
   `mic` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `indexes_uk_name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 LOCK TABLES `indexes` WRITE;
 INSERT INTO `indexes` VALUES
