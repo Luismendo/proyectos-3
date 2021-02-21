@@ -1,5 +1,3 @@
-USE `azikdev$proyectos_3`;
-
 DROP TABLE IF EXISTS `indexes_old`;
 CREATE TABLE `indexes_old` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
