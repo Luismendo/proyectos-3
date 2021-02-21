@@ -75,7 +75,7 @@ def update():
                     index = Index(name=name,
                                   value=price,
                                   variation=change,
-                                  date=today)
+                                 date=today)
                     db.session.add(index)
                     db.session.commit()
                 except ValueError as e:

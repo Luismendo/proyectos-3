@@ -308,12 +308,13 @@
                     });
                 </script>
                 <!-- Begin Page Content -->
-                <div class="container-fluid">
+                <div class="col-lg-6">
                     <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h2 class="h3 mb-0 text-gray-800">Opiniones de expertos</h2>
-                    </div>
-
+                    {% if opinions != NULL %}
+                        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                            <h2 class="h3 mb-0 text-gray-800">Opiniones de expertos</h2>
+                        </div>
+                    {% endif %}
                     {% for opinion in opinions %}
                         <div class="card" style="margin: 20px; margin-left:0;">
                             <div class="card-header">
@@ -321,6 +322,7 @@
                             </div>
                             <div class="card-body">
                                 <h5 class="card-title">{{opinion.title}}</h5>
+
                                 <p class="card-text">{{ opinion.body }}}</p>
                             </div>
                         </div>
