@@ -4,7 +4,8 @@ from flask import (
     redirect,
     request,
     session,
-    url_for
+    url_for,
+    render_template
 )
 from ..base import auth
 
