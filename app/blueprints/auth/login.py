@@ -24,7 +24,7 @@ def login_post():
         return redirect(url_for('auth.login_get'))
 
     session['user_id'] = user.id
-    return redirect(url_for('indexes.get'))
+    return redirect(url_for('indexes.get_indexes'))
 
 
 @auth.route('/logout')
