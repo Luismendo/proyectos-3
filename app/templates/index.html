@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="static/index.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='index.css') }}" rel="stylesheet">
 
     <!-- Bootstrap core JavaScript-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -29,15 +29,12 @@
 </head>
 
 <body id="page-top">
-
     <!-- Page Wrapper -->
     <div id="wrapper">
-
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('indexes.get') }}">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('indexes.get_indexes') }}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -49,15 +46,15 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('indexes.get') }}">
+                <a class="nav-link" href="{{ url_for('indexes.get_indexes') }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
 
             <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('noticias.get') }}">
+                <a class="nav-link" href="{{ url_for('articles.get_articles') }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Noticias</span></a>
+                    <span>Artículos</span></a>
             </li>
 
             <!-- Divider -->
@@ -68,7 +65,7 @@
                 Interface
             </div>
 
-            <!-- Nav Item - Noticias -->
+            <!-- Nav Item - Artículos -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('auth.logout') }}">
                     <i class="fas fa-fw fa-table"></i>
@@ -193,7 +190,7 @@
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-square" src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80"
+                                        <img class="rounded-square" src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61"
                                             alt="">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
@@ -205,7 +202,7 @@
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="static/img/undraw_profile_1.svg"
+                                        <img class="rounded-circle" src="{{ url_for('static', filename='img/undraw_profile_1.svg') }}"
                                             alt="">
                                         <div class="status-indicator"></div>
                                     </div>
@@ -217,7 +214,7 @@
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="static/img/undraw_profile_1.svg"
+                                        <img class="rounded-circle" src="{{ url_for('static', filename='img/undraw_profile_1.svg') }}"
                                             alt="">
                                         <div class="status-indicator bg-warning"></div>
                                     </div>
@@ -247,7 +244,7 @@
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="{{ url_for('profile.get') }}" id="userDropdown" role="button"
+                            <a class="nav-link dropdown-toggle" href="{{ url_for('profile.get_profile') }}" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{g.user.username}}</span>
                                 <img class="img-profile rounded-circle"
@@ -283,13 +280,8 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
-                    <!-- Page Heading -->
-
                     <!-- Content Row -->
-
                     <div class="row">
-
                         <!-- Area Chart -->
                         <div class="col-xl-12 col-lg-12">
                             <div class="card shadow mb-4">
@@ -320,31 +312,35 @@
                                 </div>
                                 <table id="table" class="table table-striped table-sm"></table>
                                 <script>
-                                    let names = {{ labels | tojson }},
-                                        values = {{ values | tojson }},
-                                        urls = {{ urls | tojson }};
+                                    const idxs_values = {{ idxs_values | tojson }};
 
                                     // bar chart data
                                     var barData = {
-                                        labels: names,
+                                        labels: idxs_values.map(function(value){
+                                            return value.index.name;
+                                        }),
                                         datasets: [{
                                             fillColor: "rgba(151,187,205,0.2)",
                                             strokeColor: "rgba(151,187,205,1)",
                                             pointColor: "rgba(151,187,205,1)",
-                                            data: values
+                                            data: idxs_values.map(function(value){
+                                                return value.value;
+                                            })
                                         }]
                                     };
 
                                     // get bar chart canvas
                                     var mychart = document.getElementById("myAreaChart").getContext("2d"),
-                                        steps = 20,
-                                        max = {{ max }};
+                                        steps = 20;
 
                                     // draw bar chart
                                     new Chart(mychart).Bar(barData, {
                                         scaleOverride: true,
                                         scaleSteps: steps,
-                                        scaleStepWidth: Math.ceil(max / steps),
+                                        scaleStepWidth: Math.ceil(
+                                            idxs_values.reduce(function (p, v) {
+                                                return (p.value > v.value ? p : v);
+                                            }, {value: 0}).value / steps),
                                         scaleStartValue: 0,
                                         scaleShowVerticalLines: true,
                                         scaleShowGridLines: true,
@@ -353,18 +349,8 @@
                                     });
 
 
-                                    let indexes = []
-                                    for (i = 0; i < names.length; i++) {
-                                        indexes.push({
-                                            key: names[i],
-                                            value: values[i]
-                                            // urls: urls[i]
-                                        });
-                                    }
-
-                                    // let table = document.createElement('table');
                                     let table = document.getElementById('table'),
-                                        headers = ['Name', 'Value'/*, 'Link'*/],
+                                        headers = ['Name', 'Value', 'Variation'],
                                         headerRow = table.createTHead().insertRow();
 
                                     headers.forEach(headerText => {
@@ -374,54 +360,37 @@
                                         headerRow.appendChild(header);
                                     });
 
-                                    var i = 0;
                                     var tableBody = document.createElement('tbody');
-                                    indexes.forEach(emp => {
-                                        let row = tableBody.insertRow();
-                                        var count = 1;
-                                        Object.values(emp).forEach(text => {
-                                            console.log("Text:" + text);
-                                            console.log("Count:" + count);
-                                            if (count == 1) {
-                                                let textNode = document.createTextNode(text),
-                                                    a = document.createElement('a');
-                                                a.appendChild(textNode);
-                                                a.href = "{{ url_for('opiniones.get') }}" + "?index=" + names[i];
-                                                row.insertCell().appendChild(a);
-                                            } /*else if (count == 3) {
-                                                let textNode = document.createTextNode(text);
-                                                    a = document.createElement('a');
-                                                a.appendChild(textNode);
-                                                a.href = text;
-                                                row.insertCell().appendChild(a);
-                                            }*/ else {
-                                                let textNode = document.createTextNode(text);
-                                                row.insertCell().appendChild(textNode);
-                                            }
-                                            count++;
-                                        });
-                                        table.appendChild(tableBody);
-                                        i++;
-                                    });
+                                    const opinions_url = "{{ url_for('indexes.get_index_opinions', index=':idx') }}";
+                                    idxs_values.forEach(idx_val => {
+                                        let row = tableBody.insertRow(),
+                                            a = document.createElement('a');
 
-                                    // myTable.appendChild(table);
+                                        a.appendChild(document.createTextNode(idx_val.index.name));
+                                        a.href = opinions_url.replace(':idx', idx_val.index.id);
+
+                                        row.insertCell().appendChild(a);
+                                        row.insertCell().appendChild(document.createTextNode(idx_val.value));
+
+                                        let text = 'N/A';
+                                        if (idx_val.variation !== null){
+                                            text = ((idx_val.variation > 0) ? '+' : '') + idx_val.variation;
+                                        }
+                                        row.insertCell().appendChild(document.createTextNode(text));
+                                    });
+                                    table.appendChild(tableBody);
                                 </script>
                             </div>
                         </div>
-
                         <!-- Pie Chart -->
                     </div>
-
                     <!-- Content Row -->
                 </div>
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
-
         </div>
         <!-- End of Content Wrapper -->
-
     </div>
     <!-- End of Page Wrapper -->
 

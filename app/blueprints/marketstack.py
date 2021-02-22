@@ -14,7 +14,6 @@ from flask import (
 
 BASE_URL = "http://api.marketstack.com/v1"
 
-marketstack = Blueprint('marketstack', __name__, template_folder='../templates', url_prefix='/marketstack')
 
 
 def _make_request(path, parameters = dict()):

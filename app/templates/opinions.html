@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="static/index.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='index.css') }}" rel="stylesheet">
 
     <!-- Bootstrap core JavaScript-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -24,7 +24,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.bundle.min.js'></script>
+
+
+
+
+
 
 </head>
 
@@ -37,7 +42,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('indexes.get') }}">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('indexes.get_indexes') }}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -49,15 +54,15 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('indexes.get') }}">
+                <a class="nav-link" href="{{ url_for('indexes.get_indexes') }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
 
             <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('noticias.get') }}">
+                <a class="nav-link" href="{{ url_for('articles.get_articles') }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Noticias</span></a>
+                    <span>Artículos</span></a>
             </li>
 
             <!-- Divider -->
@@ -68,7 +73,7 @@
                 Interface
             </div>
 
-            <!-- Nav Item - Noticias -->
+            <!-- Nav Item - Artículos -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('auth.logout') }}">
                     <i class="fas fa-fw fa-table"></i>
@@ -193,7 +198,7 @@
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="static/img/undraw_profile_1.svg"
+                                        <img class="rounded-circle" src="{{ url_for('static', filename='img/undraw_profile_1.svg') }}"
                                             alt="">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
@@ -205,7 +210,7 @@
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="static/img/undraw_profile_1.svg"
+                                        <img class="rounded-circle" src="{{ url_for('static', filename='img/undraw_profile_1.svg') }}"
                                             alt="">
                                         <div class="status-indicator"></div>
                                     </div>
@@ -217,7 +222,7 @@
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="static/img/undraw_profile_1.svg"
+                                        <img class="rounded-circle" src="{{ url_for('static', filename='img/undraw_profile_1.svg') }}"
                                             alt="">
                                         <div class="status-indicator bg-warning"></div>
                                     </div>
@@ -247,7 +252,7 @@
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="{{ url_for('profile.get') }}" id="userDropdown" role="button"
+                            <a class="nav-link dropdown-toggle" href="{{ url_for('profile.get_profile') }}" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{g.user.username}}</span>
                                 <img class="img-profile rounded-circle"
@@ -280,45 +285,69 @@
 
                 </nav>
                 <!-- End of Topbar -->
+                
+                <div class="col-12">
+                    <div class="card" style="margin: 20px; margin-left:0;">
+                        <div class="card-body">
+                            <canvas id="line-chart" width="800" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
 
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
+                <script>
+                    const latest_values = {{ latest_values | tojson }};
 
-                    <ul id='lista'>
-
-                    </ul>
-
-
-                    <script>
-                        var list = document.getElementById('lista');
-
-                        let titulo = {{ titulo | tojson }};
-
-                        let cuerpo = {{ cuerpo | tojson }};
-
-                        let url = {{ url | tojson }};
-
-                        var i = 0;
-
-                        for (let i = 0; i < titulo.length; i++){
-                            var title = titulo[i];
-                            var body = cuerpo[i];
-                            var URL = url[i];
-
-                            list.innerHTML += `
-                                <div class="card" style="margin: 20px; margin-left:0;">
-                                  <div class="card-header">
-                                    Noticia
-                                  </div>
-                                  <div class="card-body">
-                                    <h5 class="card-title">${title}</h5>
-                                    <p class="card-text">${body}</p>
-                                    <a href="${URL}" class="btn btn-primary">Ir a la noticia</a>
-                                  </div>
-                                </div>
-                            `;
+                    new Chart(document.getElementById("line-chart"), {
+                      type: 'line',
+                      data: {
+                        labels: latest_values.map(function(value){
+                            return value.timestamp;
+                        }),
+                        datasets: [{
+                            data: latest_values.map(function(value){
+                                return value.value;
+                            }),
+                            label: "{{ index.name }}",
+                            borderColor: "#3e95cd",
+                            fill: false
+                          },
+                        ]
+                      },
+                      options: {
+                        title: {
+                          display: true,
+                          text: 'Últimos 14 valores'
                         }
-                    </script>
+                      }
+                    });
+                </script>
+                <!-- Begin Page Content -->
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Opiniones de expertos
+                        </div>
+                        <div class="card-body">
+                        <!-- Page Heading -->
+                        {% if not opinions %}
+                            <p class="card-text text-danger">No hay opiniones disponibles</p>
+                        {% endif %}
+                        {% for opinion in opinions %}
+                            <div class="card m-3">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <a href="{{ opinion.url }}">
+                                            {{opinion.title}}
+                                        </a>
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">{{ opinion.body }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
 
                 </div>
                 <!-- /.container-fluid -->
@@ -336,26 +365,6 @@
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="{{ url_for('auth.logout') }}">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
 </body>
 
