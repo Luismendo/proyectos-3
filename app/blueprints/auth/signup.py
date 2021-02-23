@@ -30,4 +30,4 @@ def signup_post():
 
         session['user_id'] = user.id
 
-    return redirect(url_for('indexes.get_index'))
+    return redirect(url_for('indexes.get_indexes'))
