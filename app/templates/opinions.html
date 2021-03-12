@@ -285,7 +285,7 @@
 
                 </nav>
                 <!-- End of Topbar -->
-                
+
                 <div class="col-12">
                     <div class="card" style="margin: 20px; margin-left:0;">
                         <div class="card-body">
@@ -322,37 +322,54 @@
                     });
                 </script>
                 <!-- Begin Page Content -->
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header">
-                            Opiniones de expertos
-                        </div>
-                        <div class="card-body">
-                        <!-- Page Heading -->
-                        {% if not opinions %}
-                            <p class="card-text text-danger">No hay opiniones disponibles</p>
-                        {% endif %}
-                        {% for opinion in opinions %}
-                            <div class="card m-3">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0">
-                                        <a href="{{ opinion.url }}">
-                                            {{opinion.title}}
-                                        </a>
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <p class="card-text">{{ opinion.body }}</p>
-                                </div>
+                <div class="container row">
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                Opiniones de expertos
                             </div>
-                        {% endfor %}
+                            <div class="card-body">
+                            <!-- Page Heading -->
+                            {% if not opinions %}
+                                <p class="card-text text-danger">No hay opiniones disponibles</p>
+                            {% endif %}
+                            {% for opinion in opinions %}
+                                <div class="card m-3">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <a href="{{ opinion.url }}">
+                                                {{opinion.title}}
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">{{ opinion.body }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            </div>
                         </div>
+
+                    </div>
+                    <!-- /.container-fluid -->
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                Listado de empresas
+                            </div>
+                            <div class="card-body">
+
+
+
+                            </div>
+                        </div>
+
                     </div>
 
                 </div>
-                <!-- /.container-fluid -->
 
-            </div>
             <!-- End of Main Content -->
 
         </div>

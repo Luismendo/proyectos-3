@@ -13,6 +13,14 @@ from sqlalchemy.dialects.mysql import BIGINT, FLOAT
 db = SQLAlchemy()
 
 
+class Favourite(db.Model):
+    __tablename__ = 'favourite_indexes'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    id = db.Column(BIGINT(unsigned=True), primary_key=True)
+    user_id = db.Column(BIGINT(unsigned=True), nullable=False)
+    index_id = db.Column(BIGINT(unsigned=True), nullable=False)
+
+
 class User(db.Model):
     __tablename__ = 'users'
     __table_args__ = {'mysql_engine': 'InnoDB'}
