@@ -139,3 +139,7 @@ cython_debug/
 
 config.py
 .vscode/
+
+Scripts/
+Include/
+pyvenv.cfg

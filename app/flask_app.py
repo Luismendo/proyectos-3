@@ -11,6 +11,7 @@ bcrypt.init_app(app)
 
 app.register_blueprint(base.root)
 
+app.register_blueprint(base.api)
 app.register_blueprint(base.articles)
 app.register_blueprint(base.auth)
 app.register_blueprint(base.indexes)
@@ -28,5 +29,3 @@ def before_request():
 
 if __name__ == '__main__':
     app.run(debug=config.DEBUG)
-
-
