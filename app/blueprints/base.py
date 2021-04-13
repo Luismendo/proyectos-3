@@ -5,9 +5,11 @@ root = Blueprint('root', __name__, template_folder='../templates')
 api = Blueprint('api', __name__, template_folder='../templates', url_prefix='/api/v1')
 articles = Blueprint('articles', __name__, template_folder='../templates', url_prefix='/articles')
 auth = Blueprint('auth', __name__, template_folder='../templates', url_prefix='/auth')
+businesses = Blueprint('businesses', __name__, template_folder='../templates', url_prefix='/businesses')
 indexes = Blueprint('indexes', __name__, template_folder='../templates', url_prefix='/indexes')
 marketstack = Blueprint('marketstack', __name__, template_folder='../templates', url_prefix='/marketstack')
 profile = Blueprint('profile', __name__, template_folder='../templates', url_prefix='/profile')
+opinions = Blueprint('opinions', __name__, template_folder='../templates', url_prefix='/opinions')
 
 
 @root.route('/')

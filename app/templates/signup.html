@@ -1,3 +1,4 @@
+{% import "bootstrap/wtf.html" as wtf %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -17,14 +18,11 @@
     <form method="POST" action="{{ url_for('auth.signup_post') }}" class="form-signin">
       <img class="mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
       <h1 class="h3 mb-3 font-weight-normal">Please sign up</h1>
-      <label for="inputUsername" class="sr-only">Username</label>
-      <input type="text" name="username" id="inputEmail" class="form-control" placeholder="Username" required autofocus>
-      <label for="inputEmail" class="sr-only">Email</label>
-      <input type="text" name="email" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
-      <label for="inputPassword" class="sr-only">Password</label>
-      <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
-      <label for="inputPassword" class="sr-only">Confirm Password</label>
-      <input type="password" name="checkpassword" id="inputPassword" class="form-control" placeholder="Confirm Password" required>
+        {{ form.csrf_token }}
+        {{wtf.form_field(form.email)}}
+        {{wtf.form_field(form.username)}}
+        {{wtf.form_field(form.password)}}
+        {{wtf.form_field(form.checkpassword)}}
       <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
       <p>Do you want to <a href="{{ url_for('auth.login_get') }}">log in?</a>
     </form>

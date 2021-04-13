@@ -294,33 +294,8 @@
                     </div>
                 </div>
 
-                <script>
-                    const latest_values = {{ latest_values | tojson }};
 
-                    new Chart(document.getElementById("line-chart"), {
-                      type: 'line',
-                      data: {
-                        labels: latest_values.map(function(value){
-                            return value.timestamp;
-                        }),
-                        datasets: [{
-                            data: latest_values.map(function(value){
-                                return value.value;
-                            }),
-                            label: "{{ index.name }}",
-                            borderColor: "#3e95cd",
-                            fill: false
-                          },
-                        ]
-                      },
-                      options: {
-                        title: {
-                          display: true,
-                          text: 'Últimos 14 valores'
-                        }
-                      }
-                    });
-                </script>
+
                 <!-- Begin Page Content -->
                 <div class="container row">
 
@@ -360,9 +335,10 @@
                                 Listado de empresas
                             </div>
                             <div class="card-body">
+                                <input type="date" id="min_date_selector" name="trip-start">
 
-
-
+                                <input type="date" id="max_date_selector" name="trip-start">
+                                <button id="filter_button" type="button">Filter</button>
                             </div>
                         </div>
 
@@ -370,18 +346,110 @@
 
                 </div>
 
-            <!-- End of Main Content -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
-        </div>
+    <script>
+            const latest_values = {{ latest_values | tojson }};
+
+            var  min_date = latest_values[0]["timestamp"];
+            var  max_date = latest_values[latest_values.length-1]["timestamp"];
+
+            var min_date_selector = document.getElementById("min_date_selector")
+            var max_date_selector = document.getElementById("max_date_selector")
+
+            min_date_selector.setAttribute("min", min_date.replace("/","-").replace("/","-"));
+            min_date_selector.setAttribute("max", max_date.replace("/","-").replace("/","-"));
+            max_date_selector.setAttribute("min", min_date.replace("/","-").replace("/","-"));
+            max_date_selector.setAttribute("max", max_date.replace("/","-").replace("/","-"));
+
+                var chart = new Chart(document.getElementById("line-chart"), {
+                      type: 'line',
+                      data: {
+                        labels: latest_values.map(function(value){
+                            return value.timestamp;
+                        }),
+                        datasets: [{
+                            data: latest_values.map(function(value){
+                                return value.value;
+                            }),
+                            label: "{{ index.name }}",
+                            borderColor: "#3e95cd",
+                            fill: false
+                          },
+                        ]
+                      },
+                      options: {
+                        title: {
+                          display: true,
+                          text: 'Últimos '+ latest_values.length.toString() +' valores'
+                        }
+                      }
+                    });
+
+                    $( "#filter_button" ).click(function() {
+                        var min_date_selected = min_date_selector.value
+                        var max_date_selected = max_date_selector.value
+                        var max_date_selected_formated = new Date(max_date_selector.value)
+                        var min_date_selected_formated = new Date(min_date_selector.value)
+                        range = (max_date_selected_formated-min_date_selected_formated)/(1000*60*60*24);
+                        if (range > 0){
+                            $.ajax({
+                                type: "POST",
+                                url: '/indexes/{{index_id}}/range',
+                                data: {
+                                    range:range,
+                                    min_date:Date.parse(min_date_selected)/1000,
+                                    max_date:Date.parse(max_date_selected)/1000
+                                }, //--> send id of checked checkbox on other page
+                                    success: function(data) {
+                                        console.log(data)
+                                        chart.destroy()
+                                        chart = new Chart(document.getElementById("line-chart"), {
+                                                  type: 'line',
+                                                  data: {
+                                                    labels: data['data'].map(function(value){
+                                                        return value.timestamp;
+                                                    }),
+                                                    datasets: [{
+                                                        data: data['data'].map(function(value){
+                                                            return value.value;
+                                                        }),
+                                                        label: "{{ index.name }}",
+                                                        borderColor: "#3e95cd",
+                                                        fill: false
+                                                      },
+                                                    ]
+                                                  },
+                                                  options: {
+                                                    title: {
+                                                      display: true,
+                                                      text: 'Últimos ' + range.toString() + ' valores'
+                                                    }
+                                                  }
+                                                });
+
+                                        },
+                                    error: function() {
+                                        alert('it broke');
+                                        },
+                                    complete: function() {
+                                        }
+                                });
+                        }else{
+                            alert("Seleccione un intervalo de fechas validas")
+                        }
+                    });
+
+    </script>
+            </div>
         <!-- End of Content Wrapper -->
 
     </div>
     <!-- End of Page Wrapper -->
 
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
 
 </body>
 

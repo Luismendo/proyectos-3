@@ -1,5 +1,7 @@
 import urllib
 from bs4 import BeautifulSoup
+from datetime import datetime, timedelta
+from sqlalchemy import func
 from database import db, Opinion, Value, Index
 from flask import (
     g,
@@ -8,24 +10,61 @@ from flask import (
     request,
     flash,
     session,
-    url_for
+    url_for,
+    flash
 )
 from ..base import indexes, root
 
+@indexes.route('/<index>/range', methods=['POST'])
+def get_index_opinions_range(index):
+
+    pepito = request.get_data()
+
+    range = int(pepito[6:-40])
+
+    if range > 9:
+        min_date_timestamp = pepito[18:-20]
+        max_date_timestamp = pepito[38:]
+    else:
+        min_date_timestamp = pepito[17:-20]
+        max_date_timestamp = pepito[37:]
+
+    min_date = datetime.fromtimestamp(int(min_date_timestamp))
+    min_date = min_date.strftime("%Y-%m-%d")
+    max_date = datetime.fromtimestamp(int(max_date_timestamp))
+    max_date = max_date.strftime("%Y-%m-%d")
+
+    idx = Index.query.filter(Index.id == index).first_or_404()
+
+    latest_values = Value.query.filter(Value.index_id == idx.id) \
+                            .filter(Value.timestamp >= min_date ) \
+                            .filter(Value.timestamp <= max_date ) \
+                            .order_by(Value.timestamp.desc()) \
+                            .all()
+
+    latest_values = [{'value': value.value,
+                     'timestamp': value.timestamp.strftime("%Y/%m/%d")}
+                     for value in latest_values]
+
+    latest_values.reverse()
+
+    return {'data':latest_values}
 
 @indexes.route('/<index>')
 def get_index_opinions(index):
     idx = Index.query.filter(Index.id == index).first_or_404()
+    index_id = idx.id
     opinions = Opinion.query.filter(Opinion.index_id == idx.id).all()
     latest_values = Value.query.filter(Value.index_id == idx.id) \
                                .order_by(Value.timestamp.desc()) \
-                               .limit(14)
+                               .all()
     latest_values = [{'value': value.value,
-                      'timestamp': value.timestamp.strftime("%d/%m/%Y")}
+                      'timestamp': value.timestamp.strftime("%Y/%m/%d")}
                      for value in latest_values]
     latest_values.reverse()
+    sliderRange = len(latest_values)
 
-    return render_template('opinions.html', index=idx, opinions=opinions, latest_values=latest_values)
+    return render_template('opinions.html', index=idx, opinions=opinions, latest_values=latest_values, sliderRange=sliderRange, index_id=index_id)
 
 
 def download_opinions(index):

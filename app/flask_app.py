@@ -14,8 +14,9 @@ app.register_blueprint(base.root)
 app.register_blueprint(base.api)
 app.register_blueprint(base.articles)
 app.register_blueprint(base.auth)
+app.register_blueprint(base.businesses)
 app.register_blueprint(base.indexes)
-# app.register_blueprint(base.marketstack)
+#app.register_blueprint(base.marketstack)
 app.register_blueprint(base.profile)
 
 

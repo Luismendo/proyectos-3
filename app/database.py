@@ -3,6 +3,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.dialects.mysql import BIGINT, FLOAT
+import json
+from json import JSONEncoder
 
 # app = flask.Flask(__name__)
 # app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -69,3 +71,8 @@ class Article(db.Model):
     title = db.Column(db.String(255), nullable=False)
     body = db.Column(db.Text(), nullable=False)
     url = db.Column(db.Text(), nullable=False)
+
+# subclass JSONEncoder
+class EmployeeEncoder(JSONEncoder):
+        def default(self, o):
+            return o._asdict

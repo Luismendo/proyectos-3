@@ -8,22 +8,31 @@ from flask import (
     url_for
 )
 from ..base import auth
+from flask_wtf import FlaskForm
+from wtforms import StringField,PasswordField
 
+class RegisterForm(FlaskForm):
+    email = StringField('Email')
+    username = StringField('Username')
+    password = PasswordField('Password')
+    checkpassword = PasswordField('Confirm Password')
 
 @auth.route('/signup')
 def signup_get():
-    return render_template('signup.html')
+    form = RegisterForm()
+    return render_template('signup.html',form=form)
 
 
 @auth.route('/signup', methods=['POST'])
 def signup_post():
     session.pop('user_id', None)
 
-    if (password := request.form['password']) == request.form['checkpassword']:
+    form = RegisterForm()
+    if (password := form.password.data) == form.checkpassword.data:
         pw_hash = bcrypt.generate_password_hash(password)
 
-        user = User(username=request.form['username'],
-                    email=request.form['email'],
+        user = User(username=form.username.data,
+                    email=form.email.data,
                     password=pw_hash)
         db.session.add(user)
         db.session.commit()

@@ -1,147 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Proyectos 3 - Dashboard</title>
-
-    <!-- Custom fonts for this template-->
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-
-    <!-- Custom styles for this template-->
-    <link href="{{ url_for('static', filename='index.css') }}" rel="stylesheet">
-
-    <link href="{{ url_for('static', filename='index_2.css') }}" rel="stylesheet">
-
-    <!-- Bootstrap core JavaScript-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-
-    <!-- Page level plugins -->
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
-
-</head>
-
-<body id="page-top">
-    <!-- Page Wrapper -->
-    <div id="wrapper">
-        <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('indexes.get_indexes') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">Proyectos 3</div>
-            </a>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('indexes.get_indexes') }}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
-            </li>
-
-            <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('articles.get_articles') }}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Artículos</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Interface
-            </div>
-
-            <!-- Nav Item - Artículos -->
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('auth.logout') }}">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Cerrar Sesion</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-        </ul>
-        <!-- End of Sidebar -->
-
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
-
-            <!-- Main Content -->
-            <div id="content">
-
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
-
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4" style="margin-top: 20px;margin-left: 15px;">
-                        <h1 class="h3 mb-0 text-gray-800">{{g.user.username}} Dashboard</h1>
-                    </div>
-
-                    <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
-
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-
-                        <div class="topbar-divider d-none d-sm-block"></div>
-
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="{{ url_for('profile.get_profile') }}" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{g.user.username}}</span>
-                                <img class="img-profile rounded-circle"
-                                    src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80">
-                            </a>
-                        </li>
-
-                    </ul>
-
-                </nav>
-                <!-- End of Topbar quitar favourites-->
-
+{% block content %}
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Content Row -->
@@ -154,7 +13,7 @@
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <h6 class="m-0 font-weight-bold text-primary" id=date_today>{{table_text}}</h6>
                                         <form class="form-inline" action="/indexes" method="POST">
-                                            <select name="date_selector" id="date_selector" onchange="this.form.submit()"></select>
+                                            <select name="date_selector" id="date_selector"></select>
                                         </form>
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
@@ -165,7 +24,7 @@
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
-                                    <div class="chart-area">
+                                    <div class="chart-area" id='ParentmyAreaChart'>
                                         <canvas class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="myAreaChart"></canvas>
                                     </div>
                                 </div>
@@ -178,7 +37,7 @@
                                 </form>
 
                                 <script>
-                                    const idxs_values = {{ idxs_values | tojson }};
+                                    var idxs_values = {{ idxs_values | tojson }};
                                     const idxs_dates = {{ idxs_dates | tojson }};
                                     let favourites = {{ favourites | tojson }};
                                     favourites=JSON.stringify(favourites);
@@ -217,7 +76,7 @@
                                         steps = 20;
 
                                     // draw bar chart
-                                    new Chart(mychart).Bar(barData, {
+                            var chart = new Chart(mychart).Bar(barData, {
                                         scaleOverride: true,
                                         scaleSteps: steps,
                                         scaleStepWidth: Math.ceil(
@@ -256,8 +115,8 @@
 
                                         input.type="checkbox";
                                         input.name = "favourites";
+                                        input.classList.add("favs_checkbox");
                                         input.value = idx_val.index.id;
-                                        input.setAttribute('onclick',  'this.form.submit()');
                                         input.appendChild(document.createTextNode("Favourite"));
                                         if(favourites.includes(idx_val.index.id))input.checked=true;
 
@@ -268,7 +127,7 @@
                                         row.insertCell().appendChild(document.createTextNode(idx_val.value));
 
                                         /*POR SI FALLA EL DE ARRIBA
-                                            a = document.createElement('a');
+                                        a = document.createElement('a');
 
                                         a.appendChild(document.createTextNode(idx_val.index.name));
                                         a.href = opinions_url.replace(':idx', idx_val.index.id);
@@ -298,11 +157,98 @@
 
                                     let date_today=document.querySelector("#date_today").textContent;
                                     let selector=document.querySelector("#date_selector");
-                                    console.log(document.querySelectorAll("option")[0].value);
                                     selector.value=document.querySelectorAll("option")[0].value;
                                     if(date_today!="Datos actuales"){
                                         selector.value=date_today.replace("Datos de ", "")+" 00:00:00 GMT";
                                     }
+                                        $('.favs_checkbox').click(function() {
+                                        id = $(this).attr('value')
+                                                $.ajax({
+                                                    type: "POST",
+                                                    url: '',
+                                                    data: {
+                                                        fav_id:id,
+                                                        user_id:{{user_id}}
+                                                    }, //--> send id of checked checkbox on other page
+                                                    success: function(data) {
+                                                    },
+                                                     error: function() {
+                                                        alert('it broke');
+                                                    },
+                                                    complete: function() {
+                                                    }
+                                                });
+                                          });
+
+                                        $('#date_selector').on('change', function (e) {
+                                            var date = $(this).val()
+                                                $.ajax({
+                                                    type: "POST",
+                                                    headers: {
+                                                        'Content-Type': 'text/plain'
+                                                            },
+                                                    url: '/indexes/date',
+                                                    data: {
+                                                        selected_date:date
+                                                    },
+                                                    success: function(data) {
+                                                        console.log(data)
+                                                        $("#date_today").text(data['table_text']);
+                                                        var mychart = document.getElementById("myAreaChart").getContext("2d"), steps = 20;
+                                                        var barData = {
+                                                            labels: data['data'].map(function(value){
+                                                            return value.index.name;
+                                                            }),
+                                                            datasets: [{
+                                                                    fillColor: "rgba(151,187,205,0.2)",
+                                                                    strokeColor: "rgba(151,187,205,1)",
+                                                                    pointColor: "rgba(151,187,205,1)",
+                                                                    data: data['data'].map(function(value){
+                                                                        return value.value;
+                                                                    })
+                                                                }]
+                                                        };
+                                                        chart.destroy()
+                                                        chart = new Chart(mychart).Bar(barData, {
+                                                                scaleOverride: true,
+                                                                scaleSteps: steps,
+                                                                scaleStepWidth: Math.ceil(
+                                                                    data['data'].reduce(function (p, v) {
+                                                                        return (p.value > v.value ? p : v);
+                                                                    }, {value: 0}).value / steps),
+                                                                scaleStartValue: 0,
+                                                                scaleShowVerticalLines: true,
+                                                                scaleShowGridLines: true,
+                                                                barShowStroke: true,
+                                                                scaleShowLabels: true
+                                                            });
+
+                                                        var tableBody = document.getElementById('table');
+                                                        var aux = 1
+                                                        data['data'].forEach(idx_val => {
+                                                            //tableBody.rows[aux].cells[0].innerHTML = data['data'][aux-1]['index']['name'];
+                                                            tableBody.rows[aux].cells[1].innerHTML = data['data'][aux-1]['value'];
+                                                        if(data['data'][aux-1]['variation'] == 0){
+                                                                tableBody.rows[aux].cells[2].innerHTML = 'NO VARIATION';
+                                                                tableBody.rows[aux].cells[2].setAttribute("class","");
+                                                            }
+                                                            if(data['data'][aux-1]['variation'] > 0){
+                                                                tableBody.rows[aux].cells[2].setAttribute("class","variation_green");
+                                                                tableBody.rows[aux].cells[2].innerHTML = '+' + data['data'][aux-1]['variation'];
+                                                            }else if(data['data'][aux-1]['variation'] < 0){
+                                                                tableBody.rows[aux].cells[2].setAttribute("class","variation_red");
+                                                                tableBody.rows[aux].cells[2].innerHTML = data['data'][aux-1]['variation'];
+                                                            }
+                                                            aux++
+                                                        })
+                                                    },
+                                                     error: function() {
+                                                        alert('it broke');
+                                                    },
+                                                    complete: function() {
+                                                    }
+                                                });
+                                          });
                                 </script>
                             </div>
                         </div>
@@ -310,25 +256,7 @@
                     </div>
                     <!-- Content Row -->
                 </div>
-                <!-- /.container-fluid -->
-            </div>
-            <!-- End of Main Content -->
-        </div>
-        <!-- End of Content Wrapper -->
-
-    </div>
-    <!-- End of Page Wrapper -->
-
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
-</body>
-
-</html>
-
-
+{% endblock %}
 
 
 

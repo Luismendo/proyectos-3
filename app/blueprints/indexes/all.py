@@ -1,10 +1,13 @@
 import urllib
 from bs4 import BeautifulSoup
-from database import db, Index, Value, Favourite
+from database import db, Index, Value, Favourite, EmployeeEncoder
 from sqlalchemy import func
 from sqlalchemy.orm import selectinload
 from datetime import date
 import time
+import sys
+import simplejson, json
+from urllib.parse import unquote
 import datetime
 from flask import (
     g,
@@ -17,6 +20,48 @@ from flask import (
 )
 from ..base import indexes, root
 
+
+@indexes.route('/date', methods=['POST'])
+def get_new_date():
+
+    selected_date = request.get_data()
+    selected_date = str(selected_date)
+    selected_date = unquote(selected_date)
+
+    if request.method == 'POST' and selected_date:
+
+        selected_date = selected_date[: - 14]
+        selected_date = selected_date[16:]
+        table_text = 'Datos de ' + selected_date
+        selected_date=selected_date.replace(',','')
+        selected_date = time.strftime("%Y-%m-%d", time.strptime(selected_date, "%a %d %b %Y"))
+
+        all_idx_values = Value.query.filter(func.DATE(Value.timestamp) == selected_date)\
+                                .options(selectinload(Value.index))\
+                                .all()
+
+    max_idx = 0
+    idxs_values = []
+    if len(all_idx_values) > 0:
+        avg = sum(map(lambda val: val.value, all_idx_values)) / len(all_idx_values)
+        for val in all_idx_values:
+            if val.value > avg:
+                continue
+            elif val.value > max_idx:
+                max_idx = val.value
+
+            idxs_values.append({
+                'value': val.value,
+                'variation': val.variation,
+                'index': {
+                    'id': val.index.id,
+                    'name': val.index.name
+                }
+            })
+
+    idxs_values.sort(key=lambda idx_val: -idx_val['value'])
+
+    return {'data':idxs_values,'table_text':table_text,'selected_date':selected_date}
 
 @indexes.route('/', methods=['GET', 'POST'])
 def get_indexes():
@@ -33,27 +78,17 @@ def get_indexes():
 
     idxs_dates.reverse()
 
-    selected_date = request.form.get('date_selector')
+    dtt=datetime.datetime.today() - datetime.timedelta(days=2)
+    dtt=dtt.strftime("%a, %d %b %Y")
+    table_text = 'Datos de '+ dtt
 
-    if selected_date == None:
-        all_idx_values = Value.query.filter(func.DATE(Value.timestamp) == date.today())\
-                                    .options(selectinload(Value.index))\
-                                    .all()
-        dtt=datetime.datetime.today() - datetime.timedelta(days=1)
-        dtt=dtt.strftime("%a, %d %b %Y")
-        table_text = 'Datos de '+ dtt
-        dtt=dtt.replace(',','')
-        selected_date = time.strftime("%Y-%m-%d", time.strptime(dtt, "%a %d %b %Y"))
-    else:
-        selected_date = selected_date[: - 13]
-        table_text = 'Datos de ' + selected_date
-        selected_date = selected_date.replace(',','')
-        selected_date = time.strftime("%Y-%m-%d", time.strptime(selected_date, "%a %d %b %Y"))
+    dtt=dtt.replace(',','')
+    selected_date = time.strftime("%Y-%m-%d", time.strptime(dtt, "%a %d %b %Y"))
+
 
     all_idx_values = Value.query.filter(func.DATE(Value.timestamp) == selected_date)\
                                 .options(selectinload(Value.index))\
                                 .all()
-
 
     max_idx = 0
     idxs_values = []
@@ -91,20 +126,20 @@ def get_indexes():
     for val in all_fav_index:
         idxs_fav.append(str(val.index_id))
 
-    if request.method == 'POST':
-        favourites=request.form.getlist('favourites')
-        if favourites!=0:
-            for fav in favourites:
-                if not fav in idxs_fav:
-                    new_favourite = Favourite(user_id=g.user.id, index_id=fav)
-                    db.session.add(new_favourite)
-                    db.session.commit()
-            for fav in idxs_fav:
-                if not fav in favourites:
-                    #quit_favourite = Favourite(user_id=g.user.id, index_id=fav)
-                    quit_favourite = Favourite.query.filter_by(index_id=fav, user_id=g.user.id).first()
-                    db.session.delete(quit_favourite)
-                    db.session.commit()
+    fav_id = request.form.get('fav_id')
+    user_id = request.form.get('user_id')
+
+    if request.method == 'POST' and fav_id and user_id  :
+
+        if not fav_id in idxs_fav:
+            new_favourite = Favourite(user_id=user_id, index_id=fav_id)
+            db.session.add(new_favourite)
+            db.session.commit()
+
+        else:
+            quit_favourite = Favourite.query.filter_by(index_id=fav_id, user_id=user_id).first()
+            db.session.delete(quit_favourite)
+            db.session.commit()
 
             #g.user.id, favourites[0]
             #query para meter el favorito en la base de datos
@@ -117,9 +152,7 @@ def get_indexes():
            idxs_fav.append(str(val.index_id))
 
     # Final Guardar los favoritos en la DB ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^
-    return render_template('index.html', idxs_values=idxs_values, max_idx=max_idx, idxs_dates=idxs_dates, table_text=table_text, favourites=idxs_fav)  # , labels=labels, values=values, urls=urls)
-
-
+    return render_template('index.html', idxs_values=idxs_values, max_idx=max_idx, idxs_dates=idxs_dates, table_text=table_text, favourites=idxs_fav, user_id=g.user.id)  # , labels=labels, values=values, urls=urls)
 
 
 @indexes.route('/update')
