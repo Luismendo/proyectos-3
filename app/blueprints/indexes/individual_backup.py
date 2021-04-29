@@ -1,7 +1,7 @@
 import urllib
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
-from sqlalchemy import func, desc
+from sqlalchemy import func
 from datetime import date
 import time
 import datetime
@@ -16,6 +16,7 @@ from flask import (
     redirect,
     render_template,
     request,
+    flash,
     session,
     url_for,
     flash
@@ -36,9 +37,9 @@ def get_index_opinions_range(index):
         min_date_timestamp = pepito[17:-20]
         max_date_timestamp = pepito[37:]
 
-    min_date = date.fromtimestamp(int(min_date_timestamp))
+    min_date = datetime.fromtimestamp(int(min_date_timestamp))
     min_date = min_date.strftime("%Y-%m-%d")
-    max_date = date.fromtimestamp(int(max_date_timestamp))
+    max_date = datetime.fromtimestamp(int(max_date_timestamp))
     max_date = max_date.strftime("%Y-%m-%d")
 
     idx = Index.query.filter(Index.id == index).first_or_404()
@@ -88,7 +89,7 @@ def get_index_opinions(index):
 
 
 
-    transactions = Transactions.query.filter(Transactions.user_id == g.user.id, Transactions.idx_id == index).order_by(desc(Transactions.fecha)).all()
+    transactions = Transactions.query.filter(Transactions.user_id == g.user.id, Transactions.idx_id == index).all()
     trans_values = []
     if len(transactions) > 0:
         for val in transactions:
@@ -100,7 +101,6 @@ def get_index_opinions(index):
                 'value': val.value,
                 'quantity': val.quantity,
                 'fecha': val.fecha,
-                'operation': val.operation,
             })
 
 
@@ -126,13 +126,13 @@ def get_index_opinions(index):
 def buy():
     num_value = request.form['num_value']
     id_index = request.form['index']
-    id_user = g.user.id
+    id_user = request.form['user']
     money = User.query.filter(User.id == id_user).first()
     actual_value = Value.query.filter(Value.index_id == id_index).first()
     amount=float(actual_value.value)*float(num_value)
     if float(money.money) >= amount:
         try:
-            new_trans = Transactions(amount=amount, idx_id=id_index, user_id=id_user, value=actual_value.value, quantity=num_value, operation=1)
+            new_trans = Transactions(amount=amount, idx_id=id_index, user_id=id_user, value=actual_value.value, quantity=num_value)
             db.session.add(new_trans)
             money.money=float(money.money)-amount
             db.session.commit()
@@ -143,36 +143,6 @@ def buy():
         flash('No tienes saldo suficiente.')
     return redirect(url_for("indexes.get_index_opinions", index=id_index))
 
-
-@indexes.route('/sell', methods=['POST'])
-def sell():
-    num_value = request.form['num_value']
-    id_index = request.form['index']
-    id_user = g.user.id
-    money = User.query.filter(User.id == id_user).first()
-    actual_value = Value.query.filter(Value.index_id == id_index).first()
-    amount=float(actual_value.value)*float(num_value)
-
-    transactions = Transactions.query.filter(Transactions.user_id == g.user.id, Transactions.idx_id == id_index).all()
-    actual_actions=0
-    for trans in transactions:
-        if trans.operation==1:
-            actual_actions=actual_actions+trans.quantity
-        else:
-            actual_actions=actual_actions-trans.quantity
-
-    if float(actual_actions) >= float(num_value):
-        try:
-            new_trans = Transactions(amount=amount, idx_id=id_index, user_id=id_user, value=actual_value.value, quantity=num_value, operation=0)
-            db.session.add(new_trans)
-            money.money=float(money.money)+amount
-            db.session.commit()
-            flash('Venta realizada con éxito.')
-        except Exception:
-            flash('Error.')
-    else:
-        flash('No tienes acciones suficientes.')
-    return redirect(url_for("indexes.get_index_opinions", index=id_index))
 
 
 def download_opinions(index):

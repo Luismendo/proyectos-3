@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<nav id="menu_gral">
+  <ul id="tickers">
+  </ul>
+</nav>
+<div class="row page">
+
+   <button class="col btn btn-warning" id='anterior' disabled="disable">Anterior</button>
+    <button class="col btn btn-warning" id='siguiente'>Siguiente</button>
+</div>
+
+
+
+<script type="text/javascript">
+    // Esto lo tendremos que cambiar
+    const values_route = "{{ url_for('exchanges.list_symbol_values', mic=mic, symbol=':symbol') }}";
+    var offset = 0;
+    var total = 0;
+    var count = 0;
+    var limit = 0;
+    $( document ).ready(function() {
+
+        function llamadaAjax(call_offset){
+            $.ajax({
+                type: "GET",
+                url: "{{ url_for('api.list_tickers', mic=mic) }}?offset="+call_offset,
+
+                success: function(response) {
+                    total = response.pagination.total;
+                    count = response.pagination.count;
+                    offset = response.pagination.offset;
+                    limit = response.pagination.limit;
+
+                    if(offset > 0){
+                        document.getElementById('anterior').removeAttribute("disabled");
+                    }else{
+                        document.getElementById('anterior').setAttribute("disabled", "disable");
+                    }
+
+                    if((offset + count) < total){
+                        document.getElementById('siguiente').removeAttribute("disabled");
+                    }else{
+                        document.getElementById('siguiente').setAttribute("disabled", "disable");
+                    }
+
+
+                    var list = document.getElementById("tickers");
+                    $("#tickers").empty();
+
+                    response.data.tickers.forEach(function(ticker){
+                        if (ticker.name === null) return;
+                        if (ticker.name.toLowerCase().includes("test")) return;
+
+                        console.log(ticker);
+
+                        let row = document.createElement('li'),
+                            link = document.createElement('a'),
+                            small = document.createElement('small');
+
+                        if (!ticker.has_eod) {
+                            small.appendChild(document.createTextNode('❌'));
+                            link.onclick = function(){
+                                alert('No hay valores disponibles para esta empresa.');
+                            }
+                        }
+                        else {
+                            small.appendChild(document.createTextNode('✔️'));
+                            link.href = values_route.replace(':symbol', ticker.symbol);
+                        }
+                        link.appendChild(small);
+
+                        let name = document.createTextNode(` ${ticker.name} (${ticker.symbol})`);
+                        link.appendChild(name);
+
+
+
+                        row.appendChild(link);
+                        list.appendChild(row);
+                    });
+                },
+                error: function() {
+                    alert('Oops, se mamó!');
+                },
+                complete: function() {
+                }
+            });
+        }
+
+        llamadaAjax(offset);
+
+        $("#siguiente").click(function(){
+            if((offset + count) < total){
+                llamadaAjax(offset + limit);
+            }
+        });
+
+        $("#anterior").click(function(){
+            if(offset > 0){
+                llamadaAjax(offset - limit);
+            }
+        });
+
+    });
+</script>
+<style>
+    #wrapper #content-wrapper #content {
+        flex: none;
+    }
+
+    .row {
+        margin: 15px;
+    }
+    .btn{
+        margin: 10px;
+    }
+
+    * {
+    margin: 0;
+    padding: 0;
+    border: o none;
+    position: relative;
+    }
+    *, *:before, *:after {
+      box-sizing: inherit;
+    }
+    html {
+      box-sizing: border-box;
+      background: #eee;
+    }
+    #menu_gral {
+        font-family: verdana, sans sherif;
+        margin: 0 1rem;
+    }
+    #menu_gral ul {
+        box-shadow: 0 0 3px rgba(0,0,0,.4);
+        list-style-type: none;
+        text-align: center;
+    }
+    #menu_gral > ul li {
+        background: #6c757d;
+        border-bottom: 1px solid #32383d;
+    }
+    #menu_gral li a {
+        display: block;
+        text-decoration: none;
+        font-size: 1rem;
+        line-height: 2.5rem;
+        color: #fff;
+    }
+    #menu_gral li:hover a{
+        background: #f6c23e;
+        color: black;
+    }
+
+    #menu_gral li ul {
+        height: 0;
+        overflow: hidden;
+    }
+    #menu_gral li:hover ul{ /* es esta la q no se activa con focus o active. Solo funciona con hover*/
+        height: auto;
+    }
+    #menu_gral li li {
+
+    }
+    #menu_gral li:hover li a{
+        font-family: monospace;
+        font-size: .9rem;
+        line-height: 1.7rem;
+        border-top: 1px solid #e5e5e5;
+        background: #444;
+    }
+    #menu_gral li li a:hover{
+        background: #8AA9B8;
+    }
+</style>
+</body>
+
+{% endblock %}

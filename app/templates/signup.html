@@ -12,19 +12,26 @@
     <title>Signin Template for Bootstrap</title>
     <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
 
+    <style>
+        .form-control:focus {
+            border-color: #ffc107;
+            box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 193, 7, 0.5);
+        }
+    </style>
+
   </head>
 
-  <body class="text-center">
-    <form method="POST" action="{{ url_for('auth.signup_post') }}" class="form-signin">
-      <img class="mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+  <body class="text-center bg-dark">
+    <form method="POST" action="{{ url_for('auth.signup_post') }}" class="form-signin text-secondary  bg-dark">
+      <img class="mb-4" src="{{ url_for('static',filename='/img/WolfStreet.jpg') }}" alt="" width="72" height="72">
       <h1 class="h3 mb-3 font-weight-normal">Please sign up</h1>
         {{ form.csrf_token }}
         {{wtf.form_field(form.email)}}
         {{wtf.form_field(form.username)}}
         {{wtf.form_field(form.password)}}
         {{wtf.form_field(form.checkpassword)}}
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
-      <p>Do you want to <a href="{{ url_for('auth.login_get') }}">log in?</a>
+      <button class="btn btn-lg btn-block bg-warning text-dark" type="submit">Sign up</button>
+      <p class="text-secondary">Do you want to <a class="text-warning" href="{{ url_for('auth.login_get') }}">log in?</a></p>
     </form>
   </body>
 </html>

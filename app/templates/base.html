@@ -9,15 +9,15 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Proyectos 3 - Dashboard</title>
+    <title>Wolf Street</title>
 
     <!-- Custom fonts for this template-->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="{{ url_for('static', filename='index.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='/index.css') }}" rel="stylesheet">
 
-    <link href="{{ url_for('static', filename='index_2.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='/index_2.css') }}" rel="stylesheet">
 
     <!-- Bootstrap core JavaScript-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -26,67 +26,78 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.bundle.min.js'></script>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/img/favicon-16x16.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 </head>
 
-<body id="page-top">
+<body id="page-top" class>
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul class="navbar-nav bg-gradient-warning sidebar sidebar-dark accordion" id="accordionSidebar">
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('indexes.get_indexes') }}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">Proyectos 3</div>
+                <div class="sidebar-brand-text mx-3"><img class="mb-4" src="{{ url_for('static',filename='/img/WolfStreet.jpg') }}" alt="" width="72" height="72" margin-top:"10"></div>
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('indexes.get_indexes') }}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
-            </li>
+            <div class="nav">
+                <li class="nav-item active">
+                    <a class="nav-link btn-warning" id="inicio" href="{{ url_for('indexes.get_indexes') }}">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span class="text-dark">Dashboard</span></a>
+                </li>
 
-            <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('articles.get_articles') }}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Artículos</span></a>
-            </li>
+                <li class="nav-item active">
+                    <a class="nav-link btn-warning" id="articulo" href="{{ url_for('articles.get_articles') }}">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span class="text-dark">Artículos</span></a>
+                </li>
 
-            <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('businesses.get_businesses') }}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Empresas</span></a>
-            </li>
+                <li class="nav-item active">
+                    <a class="nav-link btn-warning" id="bolsa" href="{{ url_for('exchanges.list') }}">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span class="text-dark">Bolsas</span></a>
+                </li>
+            </div>
+
 
 
             <!-- Divider -->
             <hr class="sidebar-divider">
 
             <!-- Heading -->
-            <div class="sidebar-heading">
+            <div class="sidebar-heading text-muted">
                 Interface
             </div>
 
-            <!-- Nav Item - Artículos -->
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('auth.logout') }}">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Cerrar Sesion</span></a>
-            </li>
+            <div class="nav">
+                <!-- Nav Item - Artículos -->
+                <li class="nav-item active">
+                    <a class="nav-link btn-warning" href="{{ url_for('auth.logout') }}">
+                        <i class="fas fa-fw fa-table"></i>
+                        <span class="text-danger">Cerrar Sesion</span></a>
+                </li>
+            </div>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -95,13 +106,13 @@
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content-wrapper" class="d-flex flex-column bg-dark">
 
             <!-- Main Content -->
             <div id="content">
 
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <nav class="navbar navbar-expand navbar-light bg-secondary topbar mb-4 static-top shadow">
 
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
@@ -109,50 +120,26 @@
                     </button>
 
                     <div class="d-sm-flex align-items-center justify-content-between mb-4" style="margin-top: 20px;margin-left: 15px;">
-                        <h1 class="h3 mb-0 text-gray-800">{{g.user.username}} Dashboard</h1>
+                        <h1 class="h3 mb-0 text-light">{{g.user.username}} Dashboard</h1>
                     </div>
 
-                    <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="{{ url_for('profile.get_profile') }}" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{g.user.username}}</span>
-                                <img class="img-profile rounded-circle"
-                                    src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80">
+                            <a class="nav-link dropdown-toggle btn-secondary" href="/profile" id="userDropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-light small">Saldo: {{"%.2f€"|format(g.user.money)}}</span>
+                                <img class="img-profile rounded-circle" src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61">
                             </a>
+                        </li>
+                        <li class="nav-item dropdown no-arrow">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{total_money}}</span>
                         </li>
 
                     </ul>
 
+                    </div>
                 </nav>
                 <!-- End of Topbar quitar favourites-->
 
@@ -172,6 +159,36 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
+
+    <script>
+    ///////////////////////
+    var pathname = $(location).attr('pathname');
+
+    if(pathname == "/articles/"){
+        $("#articulo").removeClass("active");
+        $("#inicio").removeClass("active");
+        $("#bolsa").removeClass("active");
+
+        $("#articulo").addClass("active");
+        //alert("articulo");
+    }else if(pathname == "/indexes/"){
+        $("#articulo").removeClass("active");
+        $("#inicio").removeClass("active");
+        $("#bolsa").removeClass("active");
+
+        $("#inicio").addClass("active");
+        //alert("inicio");
+    }else if(pathname == "/exchanges/"){
+        $("#articulo").removeClass("active");
+        $("#inicio").removeClass("active");
+        $("#bolsa").removeClass("active");
+
+        $("#bolsa").addClass("active");
+        //alert("bolsa");
+    }
+    //console.log(pathname);
+    ///////////////////
+    </script>
 </body>
 
 </html>

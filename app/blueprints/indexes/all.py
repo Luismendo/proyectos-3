@@ -16,6 +16,7 @@ from flask import (
     request,
     flash,
     session,
+    flash,
     url_for
 )
 from ..base import indexes, root
@@ -42,6 +43,8 @@ def get_new_date():
 
     max_idx = 0
     idxs_values = []
+    idxs_values_all = []
+
     if len(all_idx_values) > 0:
         avg = sum(map(lambda val: val.value, all_idx_values)) / len(all_idx_values)
         for val in all_idx_values:
@@ -59,9 +62,20 @@ def get_new_date():
                 }
             })
 
-    idxs_values.sort(key=lambda idx_val: -idx_val['value'])
+        for val in all_idx_values:
+            idxs_values_all.append({
+                'value': val.value,
+                'variation': val.variation,
+                'index': {
+                    'id': val.index.id,
+                    'name': val.index.name
+                    }
+                })
 
-    return {'data':idxs_values,'table_text':table_text,'selected_date':selected_date}
+    idxs_values.sort(key=lambda idx_val: -idx_val['value'])
+    idxs_values_all.sort(key=lambda idx_val: -idx_val['value'])
+
+    return {'data':idxs_values,'data_all':idxs_values_all}
 
 @indexes.route('/', methods=['GET', 'POST'])
 def get_indexes():
@@ -78,7 +92,7 @@ def get_indexes():
 
     idxs_dates.reverse()
 
-    dtt=datetime.datetime.today() - datetime.timedelta(days=2)
+    dtt=datetime.datetime.today()
     dtt=dtt.strftime("%a, %d %b %Y")
     table_text = 'Datos de '+ dtt
 
@@ -92,6 +106,8 @@ def get_indexes():
 
     max_idx = 0
     idxs_values = []
+    idxs_values_all = []
+
     if len(all_idx_values) > 0:
         avg = sum(map(lambda val: val.value, all_idx_values)) / len(all_idx_values)
         for val in all_idx_values:
@@ -106,11 +122,22 @@ def get_indexes():
                 'index': {
                     'id': val.index.id,
                     'name': val.index.name
-                }
-            })
+                    }
+                })
+
+        for val in all_idx_values:
+            idxs_values_all.append({
+                'value': val.value,
+                'variation': val.variation,
+                'index': {
+                    'id': val.index.id,
+                    'name': val.index.name
+                    }
+                })
 
     # Ordenado por valor
     idxs_values.sort(key=lambda idx_val: -idx_val['value'])
+    idxs_values_all.sort(key=lambda idx_val: -idx_val['value'])
 
     # Ordenado alfabéticamente
     # idxs_values.sort(key=lambda idx_val: idx_val['index']['name'])
@@ -152,7 +179,7 @@ def get_indexes():
            idxs_fav.append(str(val.index_id))
 
     # Final Guardar los favoritos en la DB ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^
-    return render_template('index.html', idxs_values=idxs_values, max_idx=max_idx, idxs_dates=idxs_dates, table_text=table_text, favourites=idxs_fav, user_id=g.user.id)  # , labels=labels, values=values, urls=urls)
+    return render_template('index.html', idxs_values=idxs_values, idxs_values_all=idxs_values_all, max_idx=max_idx, idxs_dates=idxs_dates, table_text=table_text, favourites=idxs_fav, user_id=g.user.id)  # , labels=labels, values=values, urls=urls)
 
 
 @indexes.route('/update')

@@ -31,7 +31,7 @@ def _make_request(path, parameters=dict()):
         raise NotFound('Unable to find results')
 
 
-@api.route('/indexes')
+@api.route('/exchanges')
 def list_exchanges():
     if not g.user:
         return redirect(url_for('auth.login_get'))
@@ -39,26 +39,18 @@ def list_exchanges():
     return jsonify(_make_request('exchanges'))
 
 
-@api.route('/indexes/<index>/symbols')
-def list_symbols(index):
-    idx = Index.query.filter(Index.id == index).first_or_404()
-    if not idx or not idx.mic:
-        raise NotFound('Unable to find results')
-
+@api.route('/exchanges/<mic>')
+def list_tickers(mic):
     try:
         offset = int(request.args.get('offset'))
     except (KeyError, TypeError, ValueError):
         offset = 0
 
-    return jsonify(_make_request(f"exchanges/{idx.mic}/tickers", {'offset': offset}))
+    return jsonify(_make_request(f"exchanges/{mic}/tickers", {'offset': offset, 'limit': 200})) #el limit para la presentacion es de 19
 
 
-@api.route('/indexes/<index>/symbols/<symbol>')
-def list_exchange_symbol(index, symbol):
-    idx = Index.query.filter(Index.id == index).first_or_404()
-    if not idx or not idx.mic:
-        raise NotFound('Unable to find results')
-
+@api.route('/exchanges/<mic>/symbols/<symbol>')
+def list_symbol_values(mic, symbol):
     try:
         offset = int(request.args.get('offset'))
     except (KeyError, TypeError, ValueError):
@@ -67,6 +59,8 @@ def list_exchange_symbol(index, symbol):
     return jsonify(_make_request('eod', {
                                  'offset': offset,
                                  'symbols': symbol,
-                                 'date_from': (datetime.utcnow() - timedelta(days=30)).strftime(r'%Y-%m-%d'),
-                                 'date_to': datetime.utcnow().strftime(r'%Y-%m-%d')
+                                 'exchange': mic,
+                                 'date_from': (datetime.utcnow() - timedelta(days=365)).strftime(r'%Y-%m-%d'),
+                                 'date_to': datetime.utcnow().strftime(r'%Y-%m-%d'),
+                                 'limit': 200
                                  }))

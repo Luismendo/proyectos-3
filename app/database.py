@@ -1,8 +1,9 @@
 # import flask
 # import config
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import UniqueConstraint
-from sqlalchemy.dialects.mysql import BIGINT, FLOAT
+from sqlalchemy import UniqueConstraint, DateTime
+from datetime import datetime, timedelta
+from sqlalchemy.dialects.mysql import BIGINT, FLOAT, DOUBLE
 import json
 from json import JSONEncoder
 
@@ -30,6 +31,7 @@ class User(db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(190), nullable=False)
     password = db.Column(db.Text(), nullable=False)
+    money = db.Column(DOUBLE)
 
 
 class Index(db.Model):
@@ -71,6 +73,35 @@ class Article(db.Model):
     title = db.Column(db.String(255), nullable=False)
     body = db.Column(db.Text(), nullable=False)
     url = db.Column(db.Text(), nullable=False)
+
+
+class Transactions(db.Model):
+    __tablename__ = 'transactions'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    id = db.Column(BIGINT(unsigned=True), primary_key=True)
+    amount = db.Column(DOUBLE, nullable=False)
+    idx_id = db.Column(db.String(10), nullable=False)
+    user_id = db.Column(BIGINT(unsigned=True),  db.ForeignKey('users.id'), nullable=False)
+    value = db.Column(DOUBLE, nullable=False)
+    quantity = db.Column(DOUBLE, nullable=False)
+    fecha = db.Column(DateTime, default=datetime.utcnow)
+    operation = db.Column(BIGINT(unsigned=True), nullable=False)
+    bolsa_id = db.Column(db.String(10), nullable=False)
+
+    user = db.relationship('User', backref=db.backref(__tablename__, lazy=True))
+
+
+class Avisos(db.Model):
+    __tablename__ = 'avisos'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
+    id = db.Column(BIGINT(unsigned=True), primary_key=True)
+    valor = db.Column(DOUBLE, nullable=False)
+    aviso = db.Column(BIGINT(unsigned=True), nullable=False)
+    user_id = db.Column(BIGINT(unsigned=True),  db.ForeignKey('users.id'), nullable=False)
+    idx_id = db.Column(db.String(10), nullable=False)
+
+    user = db.relationship('User', backref=db.backref(__tablename__, lazy=True))
+
 
 # subclass JSONEncoder
 class EmployeeEncoder(JSONEncoder):

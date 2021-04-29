@@ -1,0 +1,353 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- #################### IMPORTANTE CABECERA PARA QUE FUNCIONE ESTA PÁGINA ##################### -->
+<head>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.bundle.min.js'></script>
+</head>
+<!-- #################### IMPORTANTE CABECERA PARA QUE FUNCIONE ESTA PÁGINA ##################### -->
+
+
+<div class="col">
+    <div class="card" style="margin:20px;">
+        <div class="card-body bg-secondary">
+            <div class="bg-dark">
+                <canvas id="line-chart" width="800" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col">
+    <div class="row-lg-6">
+        <div class="card bg-secondary" style="width:20%;margin:20px;">
+            <div class="card-header font-weight-bold text-warning">
+                Operar
+            </div>
+            <div class="card-body">
+                <form action="" method="post" id="operation_form">
+                    <input id="num_value" type="number" min="0" name="num_value" step="0.01" >
+                    <p>EUR: <i id="total_num_value"></i></p>
+                    {% for message in get_flashed_messages() %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                    <input type="hidden" id="idx_id" name="idx_id" value="">
+                    <input type="hidden" name="user" value="{{g.user.id}}">
+                    <input type="hidden" id="actual_value" name="actual_value" value="">
+                    <input type="hidden" id="bolsa_id" name="bolsa_id" value="">
+                    <button onclick="document.querySelector('#operation_form').setAttribute('action', '/exchanges/buy');submit()" class="btn btn-success">Comprar</button>
+                    <button onclick="document.querySelector('#operation_form').setAttribute('action', '/exchanges/sell');submit()" class="btn btn-danger">Vender</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+    <!-- COMPRAR / VENDER =================> ACIONES -->
+    <script>
+        let resultado = document.querySelector('#total_num_value');
+        let act_value = document.querySelector('#actual_value');
+        let bolsa_id = document.querySelector('#bolsa_id');
+        let idx_id = document.querySelector('#idx_id');
+        document.querySelector("#num_value").addEventListener('change', (event) => {
+                resultado.textContent = (parseFloat(response_value)*parseFloat(document.body.querySelector("#num_value").value)).toFixed(2);
+                act_value.value = response_value;
+                bolsa_id.value = response_exchange;
+                idx_id.value = response_symbol;
+
+        });
+        document.querySelector("#num_value").addEventListener('keyup', (event) => {
+                resultado.textContent = (parseFloat(response_value)*parseFloat(document.body.querySelector("#num_value").value)).toFixed(2);
+                act_value.value = response_value;
+                bolsa_id.value = response_exchange;
+                idx_id.value = response_symbol;
+        });
+    </script>
+    <!-- <===================================== =================> ACIONES -->
+
+    <div class="row-lg-6">
+        <div class="card bg-secondary" style="margin: 20px;">
+            <div class="card-header font-weight-bold text-warning">
+                Historial de transacciones
+            </div>
+            <div class="card-body">
+                <table id="table" class="styled-table table-md text-light bg-dark" style="width:100%"></table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+                    var trans_values = {{ transactions | tojson }};
+                    let table = document.getElementById('table'),
+                        headers = ['Cantidad total', 'Fecha de compra', 'Valor por acción', 'Cantidad de acciones', 'Operación'],
+                        headerRow = table.createTHead().insertRow();
+
+                    headers.forEach(headerText => {
+                        let header = document.createElement('th');
+                        let textNode = document.createTextNode(headerText);
+                        header.appendChild(textNode);
+                        headerRow.appendChild(header);
+                    });
+
+                    var tableBody = document.createElement('tbody');
+                    //const opinions_url = "{{ url_for('indexes.get_index_opinions', index=':idx') }}";
+                    trans_values.forEach(idx_val => {
+                        let row = tableBody.insertRow();
+                        row.insertCell().appendChild(document.createTextNode(idx_val.amount));
+                        row.insertCell().appendChild(document.createTextNode(idx_val.fecha));
+                        row.insertCell().appendChild(document.createTextNode(idx_val.value));
+                        row.insertCell().appendChild(document.createTextNode(idx_val.quantity));
+                        let operation;
+                        if(idx_val.operation==1)operation="Compra";
+                        else operation="Venta"
+                        row.insertCell().appendChild(document.createTextNode(operation));
+                    });
+                    table.appendChild(tableBody);
+    </script>
+
+</div>
+
+
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<script>
+    let response_value=0;
+    let response_exchange;
+    let response_symbol;
+    function llamadaAjax(call_offset=0){
+        $.ajax({
+            type: "GET",
+            url: "{{ url_for('api.list_symbol_values', mic=mic, symbol=symbol) }}",
+
+            success: function(response) {
+                response.data = response.data.map(function callback(datapoint){
+                   datapoint.date = new Date(datapoint.date);
+                   return datapoint;
+                }).reverse();
+                response_value=response.data[response.data.length-1].adj_close;
+                response_exchange=response.data[response.data.length-1].exchange;
+                response_symbol=response.data[response.data.length-1].symbol;
+                Response = response;
+                new Chart(document.getElementById("line-chart"), {
+                    type: 'line',
+                    data: {
+                        labels: response.data.map(function(datapoint){
+                            let day = datapoint.date.getDate(),
+                                month = datapoint.date.getMonth() + 1,
+                                year = datapoint.date.getFullYear();
+
+                            if(month < 10){
+                                return `${day}-0${month}-${year}`
+                            }
+
+                            return `${day}-${month}-${year}`
+                        }),
+                        datasets: [{
+                            data: response.data.map(function(datapoint){
+                                return datapoint.close;
+                            }),
+                            borderColor: "#f6c23e",
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        legend: {
+                            display: false
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: tooltipItem => `${tooltipItem.yLabel}: ${tooltipItem.xLabel}`,
+                                title: () => null
+                            }
+                        },
+                        elements: {
+                            line: {
+                                tension: 0
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: `Últimos ${response.pagination.count} valores - {{ mic }}/{{ symbol }}`,
+                            fontColor:"white"
+                        },
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    fontColor: "white",
+                                },
+                                gridLines: {
+                                  display: true ,
+                                  color: "#dedede"
+                                }
+                            }],
+                            xAxes: [{
+                                ticks: {
+                                    fontColor: "white",
+                                },
+                                gridLines: {
+                                  display: false ,
+                                  color: "#dedede"
+                                }
+                            }]
+                    }
+                    },
+                });
+            },
+            error: function() {
+                alert('Oops, se mamó!');
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        var Response;
+        llamadaAjax();
+
+        /**
+        $.ajax({
+            type: "GET",
+            url: "{{ url_for('api.list_symbol_values', mic=mic, symbol=symbol) }}",
+
+            success: function(response) {
+                response.data = response.data.map(function callback(datapoint){
+                   datapoint.date = new Date(datapoint.date);
+                   return datapoint;
+                }).reverse();
+
+                new Chart(document.getElementById("line-chart"), {
+                    type: 'line',
+                    data: {
+                        labels: response.data.map(function(datapoint){
+                            let day = datapoint.date.getDate(),
+                                month = datapoint.date.getMonth() + 1,
+                                year = datapoint.date.getFullYear();
+
+                            if(month < 10){
+                                return `${day}-0${month}-${year}`
+                            }
+
+                            return `${day}-${month}-${year}`
+                        }),
+                        datasets: [{
+                            data: response.data.map(function(datapoint){
+                                return datapoint.close;
+                            }),
+                            borderColor: "#3e95cd",
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        legend: {
+                            display: false
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: tooltipItem => `${tooltipItem.yLabel}: ${tooltipItem.xLabel}`,
+                                title: () => null
+                            }
+                        },
+                        elements: {
+                            line: {
+                                tension: 0
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: `Últimos ${response.pagination.count} valores - {{ mic }}/{{ symbol }}`
+                        }
+                    }
+                });
+        },
+        **/
+    });
+
+    /*const latest_values = { latest_values | tojson };
+
+    var  min_date = latest_values[0]["timestamp"];
+    var  max_date = latest_values[latest_values.length-1]["timestamp"];
+
+    var chart = new Chart(document.getElementById("line-chart"), {
+        type: 'line',
+        data: {
+          labels: latest_values.map(function(value){
+              return value.timestamp;
+          }),
+          datasets: [{
+              data: latest_values.map(function(value){
+                  return value.value;
+              }),
+              label: "{ index.name }",
+              borderColor: "#3e95cd",
+              fill: false
+            },
+          ]
+        },
+        options: {
+          title: {
+            display: true,
+            text: 'Últimos '+ latest_values.length.toString() +' valores'
+          }
+        }
+    });
+
+    $( "#filter_button" ).click(function() {
+        var min_date_selected = min_date_selector.value
+        var max_date_selected = max_date_selector.value
+        var max_date_selected_formated = new Date(max_date_selector.value)
+        var min_date_selected_formated = new Date(min_date_selector.value)
+        range = (max_date_selected_formated-min_date_selected_formated)/(1000*60*60*24);
+        if (range > 0){
+            $.ajax({
+                type: "POST",
+                url: '/indexes/{index_id}/range',
+                data: {
+                    range:range,
+                    min_date:Date.parse(min_date_selected)/1000,
+                    max_date:Date.parse(max_date_selected)/1000
+                }, //--> send id of checked checkbox on other page
+                    success: function(data) {
+                        console.log(data)
+                        chart.destroy()
+                        chart = new Chart(document.getElementById("line-chart"), {
+                                  type: 'line',
+                                  data: {
+                                    labels: data['data'].map(function(value){
+                                        return value.timestamp;
+                                    }),
+                                    datasets: [{
+                                        data: data['data'].map(function(value){
+                                            return value.value;
+                                        }),
+                                        label: "{index.name}",
+                                        borderColor: "#3e95cd",
+                                        fill: false
+                                      },
+                                    ]
+                                  },
+                                  options: {
+                                    title: {
+                                      display: true,
+                                      text: 'Últimos ' + range.toString() + ' valores'
+                                    }
+                                  }
+                                });
+
+                        },
+                    error: function() {
+                        alert('it broke');
+                        },
+                    complete: function() {
+                        }
+                });
+        }else{
+            alert("Seleccione un intervalo de fechas validas")
+        }
+    });*/
+</script>
+{% endblock %}
+
+</html>

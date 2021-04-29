@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Proyectos 3 - Dashboard</title>
+
+    <link href="{{ url_for('static', filename='index_2.css') }}" rel="stylesheet">
+
+    <!-- Custom fonts for this template-->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="{{ url_for('static', filename='index.css') }}" rel="stylesheet">
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.bundle.min.js'></script>
+
+
+
+
+
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('indexes.get_indexes') }}">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-laugh-wink"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Proyectos 3</div>
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item active">
+                <a class="nav-link" href="{{ url_for('indexes.get_indexes') }}">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span></a>
+            </li>
+
+            <li class="nav-item active">
+                <a class="nav-link" href="{{ url_for('articles.get_articles') }}">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Artículos</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Interface
+            </div>
+
+            <!-- Nav Item - Artículos -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Cerrar Sesion</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4" style="margin-top: 20px;margin-left: 15px;">
+                        <h1 class="h3 mb-0 text-gray-800">{{g.user.username}} Dashboard</h1>
+                    </div>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+                        <li class="nav-item dropdown no-arrow d-sm-none">
+                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-search fa-fw"></i>
+                            </a>
+                            <!-- Dropdown - Messages -->
+                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                                aria-labelledby="searchDropdown">
+                                <form class="form-inline mr-auto w-100 navbar-search">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-light border-0 small"
+                                            placeholder="Search for..." aria-label="Search"
+                                            aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="button">
+                                                <i class="fas fa-search fa-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+
+                        <!-- Nav Item - Alerts -->
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-bell fa-fw"></i>
+                                <!-- Counter - Alerts -->
+                                <span class="badge badge-danger badge-counter"></span>
+                            </a>
+                            <!-- Dropdown - Alerts -->
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="alertsDropdown">
+                                <h6 class="dropdown-header">
+                                    Alerts Center
+                                </h6>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-primary">
+                                            <i class="fas fa-file-alt text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">December 12, 2019</div>
+                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-success">
+                                            <i class="fas fa-donate text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">December 7, 2019</div>
+                                        $290.29 has been deposited into your account!
+                                    </div>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="mr-3">
+                                        <div class="icon-circle bg-warning">
+                                            <i class="fas fa-exclamation-triangle text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">December 2, 2019</div>
+                                        Spending Alert: We've noticed unusually high spending for your account.
+                                    </div>
+                                </a>
+                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+                            </div>
+                        </li>
+
+                        <!-- Nav Item - Messages -->
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-envelope fa-fw"></i>
+                                <!-- Counter - Messages -->
+                                <span class="badge badge-danger badge-counter"></span>
+                            </a>
+                            <!-- Dropdown - Messages -->
+                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="messagesDropdown">
+                                <h6 class="dropdown-header">
+                                    Message Center
+                                </h6>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="{{ url_for('static', filename='img/undraw_profile_1.svg') }}"
+                                            alt="">
+                                        <div class="status-indicator bg-success"></div>
+                                    </div>
+                                    <div class="font-weight-bold">
+                                        <div class="text-truncate">Hi there! I am wondering if you can help me with a
+                                            problem I've been having.</div>
+                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="{{ url_for('static', filename='img/undraw_profile_1.svg') }}"
+                                            alt="">
+                                        <div class="status-indicator"></div>
+                                    </div>
+                                    <div>
+                                        <div class="text-truncate">I have the photos that you ordered last month, how
+                                            would you like them sent to you?</div>
+                                        <div class="small text-gray-500">Jae Chun · 1d</div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="{{ url_for('static', filename='img/undraw_profile_1.svg') }}"
+                                            alt="">
+                                        <div class="status-indicator bg-warning"></div>
+                                    </div>
+                                    <div>
+                                        <div class="text-truncate">Last month's report looks great, I am very happy with
+                                            the progress so far, keep up the good work!</div>
+                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <div class="dropdown-list-image mr-3">
+                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
+                                            alt="">
+                                        <div class="status-indicator bg-success"></div>
+                                    </div>
+                                    <div>
+                                        <div class="text-truncate">Am I a good boy? The reason I ask is because someone
+                                            told me that people say this to all dogs, even if they aren't good...</div>
+                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
+                                    </div>
+                                </a>
+                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+                            </div>
+                        </li>
+
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="{{ url_for('profile.get_profile') }}" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{g.user.username}}</span>
+                                <img class="img-profile rounded-circle"
+                                    src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Settings
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Activity Log
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+                <div class="container row">
+                    <div class="col-12">
+                        <h1 class="title_val">{{titulo}}: {{idxs_values[0].value}}€
+                        <br>
+                                <script>
+                                    var idxs_values = {{ idxs_values | tojson }};
+                                    let idx_val = {"variation":idxs_values[0].variation}//SUSTITUIR POR LA VARIABLE REAL
+                                    let div = document.createElement('div');
+                                    let text = 'N/A';
+                                            var aux = false
+                                            if (idx_val.variation !== null){
+                                                text = ((idx_val.variation > 0) ? '+' : '') + idx_val.variation;
+                                            }
+                                            div = document.createElement('b');
+                                            if(idx_val.variation == 0){
+                                                div.appendChild(document.createTextNode("NO VARIATION"));
+                                            }else{
+                                                div.appendChild(document.createTextNode(text));
+                                            }
+                                            if(idx_val.variation > 0){
+                                                div.setAttribute("class","variation_green");
+                                            }else if(idx_val.variation < 0){
+                                                div.setAttribute("class","variation_red");
+                                            }
+                                            document.body.querySelector(".title_val").appendChild(div);
+                                </script>
+                        </h1>
+                    </div>
+                </div>
+
+                <div class="container row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                Filtro por fecha
+                            </div>
+                            <div class="card-body">
+                                <input type="date" id="min_date_selector" name="trip-start">
+
+                                <input type="date" id="max_date_selector" name="trip-start">
+                                <button id="filter_button" type="button">Filter</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                    <div class="col-12">
+                        <div class="card" style="margin: 20px; margin-left:0;">
+                            <div class="card-body">
+                                <canvas id="line-chart" width="800" height="250"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+                <div class="container row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                Operar
+                            </div>
+                            <div class="card-body">
+                                <form action="/indexes/buy" method="post">
+                                    <input id="num_value" type="number" min="0" name="num_value" step="any">
+                                    <p>EUR: <i id="total_num_value"></i></p>
+                                    {% for message in get_flashed_messages() %}
+                                        <p>{{ message }}</p>
+                                    {% endfor %}
+                                    <input type="hidden" name="index" value="{{index_id}}">
+                                    <input type="hidden" name="user" value="{{g.user.id}}">
+                                    <button type="submit" class="btn btn-success">Comprar</button>
+                                    <button type="submit" class="btn btn-danger">Vender</button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                    <script>
+                        var idxs_values = {{ idxs_values | tojson }};
+                        document.querySelector("#num_value").addEventListener('change', (event) => {
+                                let resultado = document.querySelector('#total_num_value');
+                                resultado.textContent = parseFloat(idxs_values[0].value)*parseFloat(document.body.querySelector("#num_value").value);
+                        });
+                    </script>
+
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                Historial de transacciones
+                            </div>
+                            <div class="card-body">
+                                <table id="table" class="styled-table table-md col-lg-6 col-md-6 col-sm-6 col-xs-6"></table>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <script>
+                                    var idxs_values = {{ idxs_values | tojson }};
+                                    let table = document.getElementById('table'),
+                                        headers = ['Cantidad total', 'Fecha de compra', 'Valor por acción', 'Cantidad de acciones'],
+                                        headerRow = table.createTHead().insertRow();
+
+                                    headers.forEach(headerText => {
+                                        let header = document.createElement('th');
+                                        let textNode = document.createTextNode(headerText);
+                                        header.appendChild(textNode);
+                                        headerRow.appendChild(header);
+                                    });
+
+                                    var tableBody = document.createElement('tbody');
+                                    //const opinions_url = "{{ url_for('indexes.get_index_opinions', index=':idx') }}";
+                                    idxs_values.forEach(idx_val => {
+                                        let row = tableBody.insertRow(),
+                                        row.insertCell().appendChild(document.createTextNode(idx_val.amount));
+                                        row.insertCell().appendChild(document.createTextNode(idx_val.fecha));
+                                        row.insertCell().appendChild(document.createTextNode(idx_val.value));
+                                        row.insertCell().appendChild(document.createTextNode(idx_val.quantity));
+                                    });
+                                    table.appendChild(tableBody);
+                    </script>
+
+                </div>
+
+
+                <!-- Begin Page Content -->
+                <div class="container row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                Opiniones de expertos
+                            </div>
+                            <div class="card-body">
+                            <!-- Page Heading -->
+                            {% if not opinions %}
+                                <p class="card-text text-danger">No hay opiniones disponibles</p>
+                            {% endif %}
+                            {% for opinion in opinions %}
+                                <div class="card m-3">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <a href="{{ opinion.url }}">
+                                                {{opinion.title}}
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">{{ opinion.body }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /.container-fluid -->
+                </div>
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <script>
+            const latest_values = {{ latest_values | tojson }};
+
+            var  min_date = latest_values[0]["timestamp"];
+            var  max_date = latest_values[latest_values.length-1]["timestamp"];
+
+            var min_date_selector = document.getElementById("min_date_selector")
+            var max_date_selector = document.getElementById("max_date_selector")
+
+            min_date_selector.setAttribute("min", min_date.replace("/","-").replace("/","-"));
+            min_date_selector.setAttribute("max", max_date.replace("/","-").replace("/","-"));
+            max_date_selector.setAttribute("min", min_date.replace("/","-").replace("/","-"));
+            max_date_selector.setAttribute("max", max_date.replace("/","-").replace("/","-"));
+
+                var chart = new Chart(document.getElementById("line-chart"), {
+                      type: 'line',
+                      data: {
+                        labels: latest_values.map(function(value){
+                            return value.timestamp;
+                        }),
+                        datasets: [{
+                            data: latest_values.map(function(value){
+                                return value.value;
+                            }),
+                            label: "{{ index.name }}",
+                            borderColor: "#3e95cd",
+                            fill: false
+                          },
+                        ]
+                      },
+                      options: {
+                        title: {
+                          display: true,
+                          text: 'Últimos '+ latest_values.length.toString() +' valores'
+                        }
+                      }
+                    });
+
+                    $( "#filter_button" ).click(function() {
+                        var min_date_selected = min_date_selector.value
+                        var max_date_selected = max_date_selector.value
+                        var max_date_selected_formated = new Date(max_date_selector.value)
+                        var min_date_selected_formated = new Date(min_date_selector.value)
+                        range = (max_date_selected_formated-min_date_selected_formated)/(1000*60*60*24);
+                        if (range > 0){
+                            $.ajax({
+                                type: "POST",
+                                url: '/indexes/{{index_id}}/range',
+                                data: {
+                                    range:range,
+                                    min_date:Date.parse(min_date_selected)/1000,
+                                    max_date:Date.parse(max_date_selected)/1000
+                                }, //--> send id of checked checkbox on other page
+                                    success: function(data) {
+                                        console.log(data)
+                                        chart.destroy()
+                                        chart = new Chart(document.getElementById("line-chart"), {
+                                                  type: 'line',
+                                                  data: {
+                                                    labels: data['data'].map(function(value){
+                                                        return value.timestamp;
+                                                    }),
+                                                    datasets: [{
+                                                        data: data['data'].map(function(value){
+                                                            return value.value;
+                                                        }),
+                                                        label: "{{ index.name }}",
+                                                        borderColor: "#3e95cd",
+                                                        fill: false
+                                                      },
+                                                    ]
+                                                  },
+                                                  options: {
+                                                    title: {
+                                                      display: true,
+                                                      text: 'Últimos ' + range.toString() + ' valores'
+                                                    }
+                                                  }
+                                                });
+
+                                        },
+                                    error: function() {
+                                        alert('it broke');
+                                        },
+                                    complete: function() {
+                                        }
+                                });
+                        }else{
+                            alert("Seleccione un intervalo de fechas validas")
+                        }
+                    });
+
+    </script>
+            </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+
+</body>
+
+</html>

@@ -6,23 +6,30 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
-    <link rel= "stylesheet" type= "text/css" href="{{ url_for('static',filename='/login.css') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
     <title>Signin Template for Bootstrap</title>
     <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
+    <link rel= "stylesheet" type= "text/css" href="{{ url_for('static',filename='/login.css') }}">
 
+    <style>
+        .form-control:focus {
+            border-color: #ffc107;
+            box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 193, 7, 0.5);
+        }
+    </style>
   </head>
 
-  <body class="text-center">
-    <form method="POST" class="form-signin">
-      <img class="mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
-      <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+  <body class="text-center bg-dark">
+    <form method="POST" class="form-signin bg-dark">
+      <img class="mb-4" src="{{ url_for('static',filename='/img/WolfStreet.jpg') }}" alt="" width="72" height="72">
+      <h1 class="h3 mb-3 font-weight-normal text-secondary">Please sign in</h1>
       <label for="inputEmail" class="sr-only">Username</label>
       <input type="text" name="username" id="inputEmail" class="form-control" placeholder="Username" required autofocus>
       <label for="inputPassword" class="sr-only">Password</label>
       <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-      <p>You dont have an account yet ? <a href="{{ url_for('auth.signup_get') }}">Sign up</a>
+      <button class="btn btn-lg btn-block bg-warning text-dark" type="submit">Sign in</button>
+      <p class="text-secondary">You dont have an account yet ? <a class="text-warning" href="{{ url_for('auth.signup_get') }}">Sign up</a></p>
     </form>
   </body>
 </html>

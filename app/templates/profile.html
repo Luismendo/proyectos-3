@@ -2,37 +2,477 @@
 
 {% block content %}
                 <!-- Begin Page Content -->
-                <div class="container-fluid">
+
                     <div class="row py-5 px-4">
-                        <div class="col-md-5 mx-auto">
+
                             <!-- Profile widget -->
-                            <div class="bg-white shadow rounded overflow-hidden">
-                                <div class="px-4 pt-0 pb-4 bg-gradient-primary">
+                            <div class="col rounded" style="margin-left:10px; min-width:427px;">
+                                <div class="row px-4 pt-0 pb-4 bg-gradient-warning">
                                     <div class="media align-items-end profile-head">
                                         <div class="profile mr-3"><img src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61" alt="..." width="130" class="rounded mb-2 img-thumbnail">
                                         <a href="#" class="btn btn-outline-dark btn-sm btn-block">Editar Perfil</a></div>
-                                        <div class="media-body mb-5 text-white">
+                                        <div class="media-body mb-5 text-dark m-2">
                                             <h4 class="mt-0 mb-0">{{g.user.username}}</h4>
-                                            <p class="small mb-4"> <i class="fas fa-map-marker-alt mr-2"></i>Madrid</p>
+                                            <p class="small mb-4"> <!--<i class="fas fa-map-marker-alt mr-2"></i>-->Madrid</p>
                                         </div>
+                                        <div class="media-body mb-5 text-dark">
+                                            <h4 class="mt-0 mb-0">saldo</h4>
+                                            <p class="small mb-4">{{"%.2f€"|format(g.user.money)}}</p>
+                                            <p id="totalGastado"></p>
+                                        </div>
+
                                     </div>
                                 </div>
-                                <div class="bg-light p-4 d-flex justify-content-end text-center">
-                                    <ul class="list-inline mb-0">
+
+                                <div class="row bg-secondary p-4 d-flex justify-content-end text-center">
+                                    <div class="col chart-area" style=" text-align: left;">
+
+                                        <form action="" method="post" id="operation_form">
+                                            <input id="num_value" type="number" min="0" name="money" step="0.01" placeholder="Ingresa/retira dinero">
+
+                                            <button id="meter_good" onclick="document.querySelector('#operation_form').setAttribute('action', '/profile/deposit');submit()" class="btn btn-success" style="margin:5px">Ingresar</button>
+                                            <button id="sacar_bad" onclick="document.querySelector('#operation_form').setAttribute('action', '/profile/sacar');submit()" class="btn btn-danger">Sacar</button>
+                                        </form>
+                                    </div>
+                                    <ul class="list-inline mb-0 mr-3">
                                         <li class="list-inline-item">
-                                            <h5 class="font-weight-bold mb-0 d-block">0</h5><small class="text-muted"> <i class="fas fa-image mr-1"></i>Favoritos</small>
+                                            <h5 id="favs_text" class="font-weight-bold mb-0 d-block text-light">{{ favourites | length}} </h5><small class="text-light"> <i class="fas fa-image mr-1"></i>Favoritos</small>
                                         </li>
                                         <li class="list-inline-item">
-                                            <h5 class="font-weight-bold mb-0 d-block">0</h5><small class="text-muted"> <i class="fas fa-user mr-1"></i>Compras</small>
+                                            <h5 id="num_compra" class="font-weight-bold mb-0 d-block text-light">{{compras}}</h5><small class="text-light"> <i class="fas fa-user mr-1"></i>Compras</small>
                                         </li>
                                         <li class="list-inline-item">
-                                            <h5 class="font-weight-bold mb-0 d-block">0</h5><small class="text-muted"> <i class="fas fa-user mr-1"></i>Ventas</small>
+                                            <h5 id="num_venta" class="font-weight-bold mb-0 d-block text-light">{{ventas}}</h5><small class="text-light"> <i class="fas fa-user mr-1"></i>Ventas</small>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
+                            <div class="col row bg-secondary d-flex justify-content-end text-center bg-dark text-light" id="cambio">
+                                <canvas id="pie-chart" width="800" height="320"></canvas>
+                            </div>
+
+                    </div>
+
+                <div class="row">
+                    <div id="favoritos_class" class="col-4" style="margin-right:25px">
+                        <div class="m-5">
+                            <div class="chart-area">
+                                <h3 class="text-warning" style="padding-left: 0px;">Favoritos</h3> <!--class="table-striped table-sm col-lg-6 col-md-6 col-sm-6 col-xs-6"-->
+                                <table id="table" class="styled-table table-md text-light bg-dark" style="width:100%"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="padding-left:0px">
+                        <div class="m-5">
+                            <div class="chart-area">
+                                <h3 class="text-warning" style="padding-left: 0px;">Historial de transacciones</h3>
+                                <table id="trans_table" class="styled-table table-md text-light bg-dark" style="width:100%"></table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col" style="padding-right:0px">
+                        <div class="m-5">
+                            <div class="chart-area">
+                                <h3 class="text-warning" style="padding-left: 0px;">Acciones por empresa</h3>
+                                <table id="acciones_table" class="styled-table table-md text-light bg-dark" style="width:100%"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" style="padding-right:0px">
+                        <div class="m-5">
+                            <div class="chart-area">
+                                <h3 class="text-warning" style="padding-left: 0px;">Recordatorios</h3>
+                                <table id="recordatorios_table" class="styled-table table-md text-light bg-dark" style="width:100%"></table>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <script>
+                    window.addEventListener('resize', function () {
+                        //var altura = window.innerHeight;
+                        var largura = window.innerWidth;
+                        //console.log(largura);
+                        if (largura < 1373){
+                            document.getElementById('favoritos_class').className = 'col';
+                            document.getElementById('cambio').style["max-width"] = "1200px";
+                        }
+                        if (largura >=1373){
+                            document.getElementById('favoritos_class').className = 'col-4';
+                            document.getElementById('cambio').style["max-width"] = "700px";
+                        }
+                    });
+                    //var compras = 0;
+                    //var ventas = 0;
+                    //let sitio_compra = document.getElementById('num_compra');
+                    //let sitio_venta = document.getElementById('num_venta');
+
+                    var recordatorios_values = {{ avisos | tojson }};
+                    let recordatorios_table = document.getElementById('recordatorios_table'),
+                        recordatorios_headers = ['Empresa', 'Aviso','Valor', 'Estado'],
+                        recordatorios_headerRow = recordatorios_table.createTHead().insertRow();
+
+
+                    recordatorios_headers.forEach(headerText => {
+                        let header = document.createElement('th');
+                        let textNode = document.createTextNode(headerText);
+                        header.appendChild(textNode);
+                        recordatorios_headerRow.appendChild(header);
+                    });
+
+                    var recordatorios_tableBody = document.createElement('tbody');
+                    //const opinions_url = "{{ url_for('indexes.get_index_opinions', index=':idx') }}";
+                    recordatorios_values.forEach(idx_val => {
+                        let aviso_txt="";
+                        let icono;
+                        let row = recordatorios_tableBody.insertRow();
+                        row.insertCell().appendChild(document.createTextNode(idx_val.idx_id));
+                        if (idx_val.aviso==0) {
+                            aviso_txt="Por debajo de";icono='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/></svg>';
+                            if (idx_val.valor>idx_val.valor_actual){
+                                tick='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-patch-check" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M10.354 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708 0z"/><path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911l-1.318.016z"/></svg>';
+                                //console.log(idx_val.valor+" es mayor que "+idx_val.valor_actual);
+                            }
+                            else {
+                                tick='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-patch-minus" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5z"/><path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911l-1.318.016z"/></svg>';
+                                //console.log(idx_val.valor+" es menor que "+idx_val.valor_actual);
+                            }
+                        }
+                        else{
+                            aviso_txt="Por encima de";icono='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/></svg>';
+                            if (idx_val.valor<idx_val.valor_actual){
+                                tick='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-patch-check" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M10.354 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708 0z"/><path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911l-1.318.016z"/></svg>';
+                                //console.log(idx_val.valor+" es menor que "+idx_val.valor_actual);
+                            }
+                            else {
+                                tick='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-patch-minus" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5z"/><path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911l-1.318.016z"/></svg>';
+                                //console.log(idx_val.valor+" es mayor que "+idx_val.valor_actual);
+                            }
+                        }
+                        row.insertCell().appendChild(document.createTextNode(aviso_txt));
+                        row.insertCell().innerHTML=icono+idx_val.valor;
+                        row.insertCell().innerHTML=tick;
+                        //row.innerHTML="<i class='bi bi-arrow-up'></i>";
+
+                    });
+                    recordatorios_table.appendChild(recordatorios_tableBody);
+                </script>
+                <script>
+                    //var compras = 0;
+                    //var ventas = 0;
+                    //let sitio_compra = document.getElementById('num_compra');
+                    //let sitio_venta = document.getElementById('num_venta');
+
+                    var acciones_values = {{ acciones | tojson }};
+                    let acciones_table = document.getElementById('acciones_table'),
+                        acciones_headers = ['Bolsa','Empresa', 'Acciones','Valor Accion','Invertido','Insertar Recordatorio'],
+                        acciones_headerRow = acciones_table.createTHead().insertRow();
+
+                    //////Crear los inputs copiando del hecho
+                    let lol = document.getElementById('operation_form');
+                    /////
+
+                    acciones_headers.forEach(headerText => {
+                        let header = document.createElement('th');
+                        let textNode = document.createTextNode(headerText);
+                        header.appendChild(textNode);
+                        acciones_headerRow.appendChild(header);
+                    });
+
+                    var acciones_tableBody = document.createElement('tbody');
+                    //const opinions_url = "{{ url_for('indexes.get_index_opinions', index=':idx') }}";
+                    let totalGastado = 0;
+                    acciones_values.forEach(idx_val => {
+                        //cambiar el input original para la situacion
+                        let dupe = lol.cloneNode(true);
+
+                        dupe[0].removeAttribute("id");
+                        dupe[1].removeAttribute("id");
+                        dupe.setAttribute('id',idx_val.name);
+                        dupe[1].innerHTML = 'Alarma';
+                        dupe[2].remove();
+                        dupe[1].setAttribute('onclick',"document.getElementById('"+idx_val.name+"').setAttribute('action', '/profile/aviso');submit()");
+                        //dupe[1].setAttribute("onclick","submit()");
+                        dupe[0].setAttribute('placeholder',"Poner alarma");
+                        dupe[0].setAttribute('name',"valor");
+
+                        var input = document.createElement('input');
+                        input.setAttribute("name","idx_id");
+                        input.setAttribute("value", ""+idx_val.name+"");
+                        input.setAttribute("hidden","true");
+
+                        var input1 = document.createElement('input');
+                        input1.setAttribute("name","accion");
+                        input1.setAttribute("value", idx_val.value);
+                        input1.setAttribute("hidden","true");
+
+                        dupe.appendChild(input)
+                        dupe.appendChild(input1)
+
+                        /*
+                        var form = document.createElement('form');
+                        form.setAttribute("method","post");
+                        form.setAttribute("id",idx_val.name);
+
+
+
+                        form.appendChild(input);
+                        form.appendChild(input1);
+                        form.appendChild(dupe);
+                        */
+                        ///////////
+
+                        totalGastado = totalGastado + (idx_val.amount * idx_val.value).toFixed(2);
+
+
+                        let row = acciones_tableBody.insertRow();
+                        row.insertCell().appendChild(document.createTextNode(idx_val.bolsa_id));
+                        row.insertCell().appendChild(document.createTextNode(idx_val.name));
+                        row.insertCell().appendChild(document.createTextNode(idx_val.amount));
+                        row.insertCell().appendChild(document.createTextNode(idx_val.value));
+                        row.insertCell().appendChild(document.createTextNode((idx_val.amount * idx_val.value).toFixed(2)));
+                        row.insertCell().appendChild(dupe);
+
+                    });
+                    let subir = document.getElementById('totalGastado');
+                    //subir.appendChild(document.createTextNode(`Total gastado: ${totalGastado}`));
+                    acciones_table.appendChild(acciones_tableBody);
+                </script>
+
+                <script>
+                    //var compras = 0;
+                    //var ventas = 0;
+                    //let sitio_compra = document.getElementById('num_compra');
+                    //let sitio_venta = document.getElementById('num_venta');
+
+                    var trans_values = {{ transactions | tojson }};
+                    let trans_table = document.getElementById('trans_table'),
+                        trans_headers = ['Bolsa', 'Empresa','Cantidad total', 'Fecha de compra', 'Valor por acción', 'Cantidad de acciones', 'Operación'],
+                        trans_headerRow = trans_table.createTHead().insertRow();
+
+                    trans_headers.forEach(headerText => {
+                        let header = document.createElement('th');
+                        let textNode = document.createTextNode(headerText);
+                        header.appendChild(textNode);
+                        trans_headerRow.appendChild(header);
+                    });
+
+                    var trans_tableBody = document.createElement('tbody');
+                    //const opinions_url = "{{ url_for('indexes.get_index_opinions', index=':idx') }}";
+                    trans_values.forEach(idx_val => {
+                        let row = trans_tableBody.insertRow();
+                        row.insertCell().appendChild(document.createTextNode(idx_val.bolsa_id));
+                        row.insertCell().appendChild(document.createTextNode(idx_val.idx_id));
+                        row.insertCell().appendChild(document.createTextNode(idx_val.amount));
+                        row.insertCell().appendChild(document.createTextNode(idx_val.fecha));
+                        row.insertCell().appendChild(document.createTextNode(idx_val.value));
+                        row.insertCell().appendChild(document.createTextNode(idx_val.quantity));
+                        let operation;
+                        if(idx_val.operation==1){
+                            //compras++;
+                            operation="Compra";
+                            //sitio_compra.appendChild(document.createTextNode(compras));
+                        }
+                        else{
+                            //ventas++;
+                            operation="Venta"
+                        }
+                        row.insertCell().appendChild(document.createTextNode(operation));
+                    });
+                    trans_table.appendChild(trans_tableBody);
+                </script>
+                <script>
+                    var idxs_values = {{ idxs_values | tojson }};
+                    var favourites = {{ favourites | tojson }};
+
+                    favourites=JSON.stringify(favourites);
+
+                    let table = document.getElementById('table'),
+                        headers = ['Name', 'Value', 'Variation'],
+                        headerRow = table.createTHead().insertRow();
+
+                    headers.forEach(headerText => {
+                        let header = document.createElement('th');
+                        let textNode = document.createTextNode(headerText);
+                        header.appendChild(textNode);
+                        headerRow.appendChild(header);
+                    });
+
+                    var tableBody = document.createElement('tbody');
+                    const opinions_url = "{{ url_for('indexes.get_index_opinions', index=':idx') }}";
+                    idxs_values.forEach(idx_val => {
+                        let row = tableBody.insertRow(),
+                            div = document.createElement('div');
+                            a = document.createElement('a');
+                            input = document.createElement('input');
+
+                        a.appendChild(document.createTextNode(idx_val.index.name));
+                        a.href = opinions_url.replace(':idx', idx_val.index.id);
+
+                        input.type="checkbox";
+                        input.name = "favourites";
+                        input.classList.add("favs_checkbox");
+                        input.value = idx_val.index.id;
+                        input.appendChild(document.createTextNode("Favourite"));
+                        if(favourites.includes(idx_val.index.id))input.checked=true;
+
+                        div.appendChild(a);
+                        div.appendChild(input)
+
+                        row.insertCell().appendChild(div);
+                        row.insertCell().appendChild(document.createTextNode(idx_val.value));
+
+                        let text = 'N/A';
+                        var aux = false
+                        if (idx_val.variation !== null){
+                            text = ((idx_val.variation > 0) ? '+' : '') + idx_val.variation;
+                        }
+                        div = document.createElement('div');
+                        if(idx_val.variation == 0){
+                            div.appendChild(document.createTextNode("NO VARIATION"));
+                        }else{
+                            div.appendChild(document.createTextNode(text));
+                        }
+                        if(idx_val.variation > 0){
+                            div.setAttribute("class","variation_green");
+                        }else if(idx_val.variation < 0){
+                            div.setAttribute("class","variation_red");
+                        }
+                        row.insertCell().appendChild(div);
+                    });
+                    table.appendChild(tableBody);
+
+                    $(document).on("click",'.favs_checkbox', function(){
+                        id = $(this).attr('value')
+                        $.ajax({
+                            type: "POST",
+                            url: '',
+                            data: {
+                                fav_id:id,
+                                user_id:{{user_id}}
+                            }, //--> send id of checked checkbox on other page
+                            success: function(data) {
+                                var favs = document.getElementById("favs_text");
+                                var count = Object.keys(data['data']).length;
+                                favs.innerHTML = count
+                                var row = document.getElementsByTagName('tbody')[0]
+                                var head = document.getElementsByTagName('thead')[0]
+                                row.parentNode.removeChild(row);
+                                head.parentNode.removeChild(head);
+
+                                let table = document.getElementById('table'),
+                                    headers = ['Name', 'Value', 'Variation'],
+                                    headerRow = table.createTHead().insertRow();
+
+                                headers.forEach(headerText => {
+                                    let header = document.createElement('th');
+                                    let textNode = document.createTextNode(headerText);
+                                    header.appendChild(textNode);
+                                    headerRow.appendChild(header);
+                                });
+
+                                var tableBody = document.createElement('tbody');
+                                const opinions_url = "{{ url_for('indexes.get_index_opinions', index=':idx') }}";
+                                data['data'].forEach(idx_val => {
+                                    let row = tableBody.insertRow(),
+                                        div = document.createElement('div');
+                                        a = document.createElement('a');
+                                        input = document.createElement('input');
+
+                                    a.appendChild(document.createTextNode(idx_val.index.name));
+                                    a.href = opinions_url.replace(':idx', idx_val.index.id);
+
+                                    input.type="checkbox";
+                                    input.name = "favourites";
+                                    input.classList.add("favs_checkbox");
+                                    input.value = idx_val.index.id;
+                                    input.appendChild(document.createTextNode("Favourite"));
+                                    if(favourites.includes(idx_val.index.id))input.checked=true;
+
+                                    div.appendChild(a);
+                                    div.appendChild(input)
+
+                                    row.insertCell().appendChild(div);
+                                    row.insertCell().appendChild(document.createTextNode(idx_val.value));
+                                    let text = 'N/A';
+                                    var aux = false
+                                    if (idx_val.variation !== null){
+                                        text = ((idx_val.variation > 0) ? '+' : '') + idx_val.variation;
+                                    }
+                                    div = document.createElement('div');
+                                    if(idx_val.variation == 0){
+                                        div.appendChild(document.createTextNode("NO VARIATION"));
+                                    }else{
+                                        div.appendChild(document.createTextNode(text));
+                                    }
+                                    if(idx_val.variation > 0){
+                                        div.setAttribute("class","variation_green");
+                                    }else if(idx_val.variation < 0){
+                                        div.setAttribute("class","variation_red");
+                                    }
+                                    row.insertCell().appendChild(div);
+                                });
+                                table.appendChild(tableBody);
+                            },
+                             error: function() {
+                                alert('it broke');
+                            },
+                            complete: function() {
+                            }
+                        });
+                    });
+                </script>
+
+                <script>
+
+                    var colors = []
+
+                    var barData = {
+                        labels: acciones_values.map(function(value){
+                            //const variable = Math.round (Math.random () * 255);
+                            //const r = (246 + variable) % 255
+                            //const g = (194 + variable) % 255
+                            //const b = (62 + variable) % 255
+
+                            const r = Math.round (Math.random () * 255);
+                            const g = Math.round (Math.random () * 255);
+                            const b = Math.round (Math.random () * 255);
+
+                            colors.push("rgb("+r+","+g+","+b+")")
+                            return value.name;
+                        }),
+                        datasets: [{
+                            label: "Acciones",
+                            color: "white",
+                            backgroundColor:colors,
+                            borderColor:"#f6c23e",
+                            data: acciones_values.map(function(value){
+                                                return value.amount;
+                                            })
+                          }]
+                    };
+
+                    new Chart(document.getElementById("pie-chart"), {
+                            type: 'pie',
+                            data: barData,
+                            options: {
+                              title: {
+                                display: true,
+                                text: 'Acciones'
+                              },
+                                legend: {
+                                    labels: {
+                                        fontColor: "white",
+                                    }
+                                },
+                            },
+                        });
+
+                </script>
                 <!-- /.container-fluid -->
+                <style>
+                    .pt-0, .py-0 {
+                        padding-top: 1.5rem!important;
+                    }
+                </style>
 {% endblock %}

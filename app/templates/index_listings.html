@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<nav id="menu_gral">
+  <ul id="EsteUL">
+    <li><a href="#">Opción 1</a>
+        <ul>
+          <li><a href="#">Opción 1.1</a></li>
+          <li><a href="#">Opción 1.2</a></li>
+          <li><a href="#">Opción 1.3</a></li>
+        </ul>
+    </li>
+  </ul>
+</nav>
+
+<div class="container-fluid">
+    <!-- Content Row -->
+    <div class="row">
+        <!-- Area Chart -->
+        <div class="col-xl-12 col-lg-12">
+            <div class="card shadow mb-4" id="countries">
+                <div class="btn-group">
+                    <button class="btn btn-default btn-lg dropdown-toggle" type="button" data-toggle="dropdown">
+                        Estados Unidos <span class="caret"></span>
+                    </button>
+
+                    <ul class="dropdown-menu col-12">
+                        <li><a href="#">Acción #1</a></li>
+                        <li><a href="#">Acción #2</a></li>
+                        <li><a href="#">Acción #3</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    const symbols_route = "{{ url_for('articles.get_articles') }}";
+    $( document ).ready(function() {
+        $.ajax({
+            type: "GET",
+                url: '/api/v1/indexes',
+                success: function(data) {
+                    let grouped = data.data.reduce((countries, index) => {
+                        const country = (countries[index.country] || []);
+                        country.push(index);
+                        countries[index.country] = country;
+                        return countries;
+                    }, {});
+
+                    var countries = document.getElementById("countries");
+
+                    for (const country in grouped) {
+                        if (country === null) continue;
+
+                        let group = document.createElement('div');
+                        group.className = 'btn-group';
+
+                        let button = document.createElement('button');
+                        button.className = 'btn btn-default btn-lg dropdown-toggle';
+                        button.type = 'button';
+                        button.dataset.toggle = 'dropdown';
+
+                        let textNode = document.createTextNode(country);
+                        button.appendChild(textNode);
+                        group.appendChild(button);
+
+                        let dropdown = document.createElement('ul');
+                        dropdown.className = 'dropdown-menu col-12';
+
+                        let nuevo1 = document.createElement('li');
+
+                        grouped[country].forEach(function(index, i, array){
+                            let row = document.createElement('li');
+
+                            let link = document.createElement('a');
+                            link.href = '#';
+
+                            let name = document.createTextNode(index.name + " (" + index.mic + ")");
+                            link.appendChild(name);
+                            row.appendChild(link);
+                            dropdown.appendChild(row);
+                        });
+                        group.appendChild(dropdown);
+
+                        console.log(`${country}:`);
+                        console.log(grouped[country]);
+
+                        countries.appendChild(group);
+                    }
+                },
+                 error: function() {
+                    alert('Oops, se mamó!');
+                },
+                complete: function() {
+                }
+        });
+    });
+</script>
+<style>
+    * {
+    margin: 0;
+    padding: 0;
+    border: o none;
+    position: relative;
+    }
+    *, *:before, *:after {
+      box-sizing: inherit;
+    }
+    html {
+      box-sizing: border-box;
+      background: #eee;
+    }
+    #menu_gral {
+        font-family: verdana, sans sherif;
+        width: 20vw;
+        margin: 0 1rem;
+    }
+    #menu_gral ul {
+        box-shadow: 0 0 3px rgba(0,0,0,.4);
+        list-style-type: none;
+        text-align: center;
+    }
+    #menu_gral > ul li {
+        background: #FFf;
+    }
+    #menu_gral li a {
+        display: block;
+        text-decoration: none;
+        font-size: 1rem;
+        line-height: 2.5rem;
+        color: #444;
+    }
+    #menu_gral li:hover a, #menu_gral li a:focus {
+        background: #8DA889;
+        color: #fff;
+    }
+
+    #menu_gral li ul {
+        height: 0;
+        overflow: hidden;
+    }
+    #menu_gral li:hover ul, #menu_gral li:focus ul {
+        height: auto;
+    }
+    #menu_gral li li {
+
+    }
+    #menu_gral li:hover li a, #menu_gral li:focus li a {
+        font-family: monospace;
+        font-size: .9rem;
+        line-height: 1.7rem;
+        border-top: 1px solid #e5e5e5;
+        background: #444;
+    }
+    #menu_gral li li a:hover, #menu_gral li li a:focus {
+        background: #8AA9B8;
+    }
+</style>
+</body>
+
+{% endblock %}

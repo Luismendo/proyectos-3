@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<nav id="menu_gral">
+  <ul id="EsteUL">
+  </ul>
+</nav>
+
+
+
+
+<script type="text/javascript">
+    const symbols_route = "{{ url_for('exchanges.list_exchange_symbols', exchange=exchange) }}";
+    $( document ).ready(function() {
+        $.ajax({
+            type: "GET",
+                url: "{{ url_for('api.list_exchange_symbols', exchange=exchange) }},
+                success: function(data) {
+                    let grouped = data.data.reduce((countries, index) => {
+                        if (index.country !== null) {
+                            const country = (countries[index.country] || []);
+                            country.push(index);
+                            countries[index.country] = country;
+                        }
+                        return countries;
+                    }, {});
+
+
+                    var nuevo = document.getElementById("EsteUL");
+                    //let count = 0;
+                    for (const country in grouped) {
+                        let Pais = document.createElement('li');
+
+                        //Pais.setAttribute("id", count);
+                        //count++;
+                        //Pais.onclick= function(this) {
+                        //  alert("Hola")
+                        //}
+
+
+                        let PaisTitulo = document.createElement('a');
+                        PaisTitulo.href = '#';
+                        let nuevoTitulo = document.createTextNode(country);
+                        PaisTitulo.appendChild(nuevoTitulo);
+                        Pais.appendChild(PaisTitulo);
+                        let BolsasPais = document.createElement('ul');
+
+
+                        grouped[country].forEach(function(index, i, array){
+                            let Bolsa = document.createElement('li');
+                            let BolsaTitulo = document.createElement('a');
+                            BolsaTitulo.href = '#';
+                            let BolsaContenido = document.createTextNode(index.name + " (" + index.mic + ")");
+                            BolsaTitulo.appendChild(BolsaContenido);
+                            Bolsa.appendChild(BolsaTitulo);
+                            BolsasPais.appendChild(Bolsa);
+
+                        });
+                        //countries.appendChild(group);
+                        Pais.appendChild(BolsasPais);
+                        nuevo.appendChild(Pais);
+                    }
+                },
+                 error: function() {
+                    alert('Oops, se mamó!');
+                },
+                complete: function() {
+                }
+        });
+    });
+</script>
+<style>
+    * {
+    margin: 0;
+    padding: 0;
+    border: o none;
+    position: relative;
+    }
+    *, *:before, *:after {
+      box-sizing: inherit;
+    }
+    html {
+      box-sizing: border-box;
+      background: #eee;
+    }
+    #menu_gral {
+        font-family: verdana, sans sherif;
+        margin: 0 1rem;
+    }
+    #menu_gral ul {
+        box-shadow: 0 0 3px rgba(0,0,0,.4);
+        list-style-type: none;
+        text-align: center;
+    }
+    #menu_gral > ul li {
+        background: #FFf;
+    }
+    #menu_gral li a {
+        display: block;
+        text-decoration: none;
+        font-size: 1rem;
+        line-height: 2.5rem;
+        color: #444;
+    }
+    #menu_gral li:hover a{
+        background: #8DA889;
+        color: #fff;
+    }
+
+    #menu_gral li ul {
+        height: 0;
+        overflow: hidden;
+    }
+    #menu_gral li:hover ul{ /* es esta la q no se activa con focus o active. Solo funciona con hover*/
+        height: auto;
+    }
+    #menu_gral li li {
+
+    }
+    #menu_gral li:hover li a{
+        font-family: monospace;
+        font-size: .9rem;
+        line-height: 1.7rem;
+        border-top: 1px solid #e5e5e5;
+        background: #444;
+    }
+    #menu_gral li li a:hover{
+        background: #8AA9B8;
+    }
+</style>
+</body>
+
+{% endblock %}

@@ -3,8 +3,8 @@
 {% block content %}
                 <div class="container-fluid">
                     <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
+                        <div class="card bg-secondary">
+                            <div class="card-header font-weight-bold text-warning">
                                 Artículos
                             </div>
                             <div class="card-body">
@@ -13,16 +13,16 @@
                                 <p class="card-text text-danger">No hay artículos disponibles</p>
                             {% endif %}
                             {% for article in articles %}
-                                <div class="card m-3">
+                                <div class="card m-3 bg-dark">
                                     <div class="card-header">
                                         <h5 class="card-title mb-0">
-                                            <a href="{{ article.url }}">
+                                            <a class="text-warning" href="{{ article.url }}">
                                                 {{ article.title }}
                                             </a>
                                         </h5>
                                     </div>
                                     <div class="card-body">
-                                        <p class="card-text">{{ article.body }}</p>
+                                        <p class="card-text text-light">{{ article.body }}</p>
                                     </div>
                                 </div>
                             {% endfor %}
