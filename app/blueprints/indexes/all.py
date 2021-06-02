@@ -82,17 +82,17 @@ def get_indexes():
     if not g.user:
         return redirect(url_for('auth.login_get'))
 
+
+    # Tenemos que filtrar por un índice porque las horas son distintas en cada uno, así que si no terminamos con 500 fechas iguales al seleccionar.
     all_dates_available = Value.query.filter(Value.index_id == 1046)\
                                      .distinct(Value.timestamp)\
                                      .all()
-    idxs_dates = []
 
-    for val in all_dates_available:
-        idxs_dates.append(val.timestamp)
-
+    idxs_dates = [val.timestamp for val in all_dates_available]
     idxs_dates.reverse()
 
-    dtt=datetime.datetime.today()
+    #dtt=datetime.datetime.today()
+    dtt=all_dates_available[-1].timestamp
     dtt=dtt.strftime("%a, %d %b %Y")
     table_text = 'Datos de '+ dtt
 

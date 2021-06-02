@@ -11,6 +11,7 @@
     <title>Signin Template for Bootstrap</title>
     <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
     <link rel= "stylesheet" type= "text/css" href="{{ url_for('static',filename='/login.css') }}">
+    <link href="{{ url_for('static', filename='/index_2.css') }}" rel="stylesheet">
 
     <style>
         .form-control:focus {
@@ -22,7 +23,7 @@
 
   <body class="text-center bg-dark">
     <form method="POST" class="form-signin bg-dark">
-      <img class="mb-4" src="{{ url_for('static',filename='/img/WolfStreet.jpg') }}" alt="" width="72" height="72">
+      <img class="mb-4 dabid_visval_las_2_con_v" src="{{ url_for('static',filename='/img/WolfStreet.jpg') }}" alt="" width="72" height="72">
       <h1 class="h3 mb-3 font-weight-normal text-secondary">Please sign in</h1>
       <label for="inputEmail" class="sr-only">Username</label>
       <input type="text" name="username" id="inputEmail" class="form-control" placeholder="Username" required autofocus>

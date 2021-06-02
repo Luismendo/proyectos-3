@@ -51,7 +51,6 @@ def sacar():
 
 @profile.route('/aviso', methods=['GET', 'POST'])
 def aviso():
-    flash("Hola")
     if not g.user:
         return redirect(url_for('auth.login_get'))
 
@@ -172,6 +171,7 @@ def get_profile():
         for acci in acciones_nr:
             if acci==avi.idx_id:
                 valor_actual=avi.valor
+        #valor_actual=250
         avisos.append({
                 'id': avi.id,
                 'valor': avi.valor,

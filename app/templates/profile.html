@@ -33,6 +33,9 @@
                                             <button id="meter_good" onclick="document.querySelector('#operation_form').setAttribute('action', '/profile/deposit');submit()" class="btn btn-success" style="margin:5px">Ingresar</button>
                                             <button id="sacar_bad" onclick="document.querySelector('#operation_form').setAttribute('action', '/profile/sacar');submit()" class="btn btn-danger">Sacar</button>
                                         </form>
+                                        {% for message in get_flashed_messages() %}
+                                            <p>{{ message }}</p>
+                                        {% endfor %}
                                     </div>
                                     <ul class="list-inline mb-0 mr-3">
                                         <li class="list-inline-item">
@@ -305,10 +308,12 @@
                             div = document.createElement('div');
                             a = document.createElement('a');
                             input = document.createElement('input');
+                            label = document.createElement('label');
+
 
                         a.appendChild(document.createTextNode(idx_val.index.name));
                         a.href = opinions_url.replace(':idx', idx_val.index.id);
-
+                        /*
                         input.type="checkbox";
                         input.name = "favourites";
                         input.classList.add("favs_checkbox");
@@ -318,6 +323,23 @@
 
                         div.appendChild(a);
                         div.appendChild(input)
+                        */
+                        input.type="checkbox";
+                        input.name = "favourites";
+                        input.value = idx_val.index.id;
+                        input.classList.add("form-check-input");
+                        input.classList.add("favs_checkbox");
+                        input.id="flexSwitchCheckDefault";
+                        if(favourites.includes(idx_val.index.id))input.checked=true;
+
+                        label.classList.add("form-check-label");
+                        label.setAttribute("for", "flexSwitchCheckDefault");
+                        label.appendChild(a);
+
+                        div.classList.add("form-check");
+                        div.classList.add("form-switch");
+                        div.appendChild(input);
+                        div.appendChild(label);
 
                         row.insertCell().appendChild(div);
                         row.insertCell().appendChild(document.createTextNode(idx_val.value));
@@ -378,10 +400,12 @@
                                         div = document.createElement('div');
                                         a = document.createElement('a');
                                         input = document.createElement('input');
+                                        label = document.createElement('label');
+
 
                                     a.appendChild(document.createTextNode(idx_val.index.name));
                                     a.href = opinions_url.replace(':idx', idx_val.index.id);
-
+/*
                                     input.type="checkbox";
                                     input.name = "favourites";
                                     input.classList.add("favs_checkbox");
@@ -391,6 +415,23 @@
 
                                     div.appendChild(a);
                                     div.appendChild(input)
+*/
+                                    input.type="checkbox";
+                                    input.name = "favourites";
+                                    input.value = idx_val.index.id;
+                                    input.classList.add("form-check-input");
+                                    input.classList.add("favs_checkbox");
+                                    input.id="flexSwitchCheckDefault";
+                                    if(favourites.includes(idx_val.index.id))input.checked=true;
+
+                                    label.classList.add("form-check-label");
+                                    label.setAttribute("for", "flexSwitchCheckDefault");
+                                    label.appendChild(a);
+
+                                    div.classList.add("form-check");
+                                    div.classList.add("form-switch");
+                                    div.appendChild(input);
+                                    div.appendChild(label);
 
                                     row.insertCell().appendChild(div);
                                     row.insertCell().appendChild(document.createTextNode(idx_val.value));

@@ -143,11 +143,13 @@
                                             div = document.createElement('div');
                                             a = document.createElement('a');
                                             input = document.createElement('input');
+                                            label = document.createElement('label');
 
                                         a.appendChild(document.createTextNode(idx_val.index.name));
                                         a.href = opinions_url.replace(':idx', idx_val.index.id);
                                         a.classList.add("p-1");//mr-1 si quieres solo padding por la derecha. El p-1 pone un poco por todos lados
 
+                                        /*
                                         input.type="checkbox";
                                         input.name = "favourites";
                                         input.classList.add("favs_checkbox");
@@ -157,6 +159,23 @@
 
                                         div.appendChild(a);
                                         div.appendChild(input)
+                                        */
+                                        input.type="checkbox";
+                                        input.name = "favourites";
+                                        input.value = idx_val.index.id;
+                                        input.classList.add("form-check-input");
+                                        input.classList.add("favs_checkbox");
+                                        input.id="flexSwitchCheckDefault";
+                                        if(favourites.includes(idx_val.index.id))input.checked=true;
+
+                                        label.classList.add("form-check-label");
+                                        label.setAttribute("for", "flexSwitchCheckDefault");
+                                        label.appendChild(a);
+
+                                        div.classList.add("form-check");
+                                        div.classList.add("form-switch");
+                                        div.appendChild(input);
+                                        div.appendChild(label);
 
                                         row.insertCell().appendChild(div);
                                         row.insertCell().appendChild(document.createTextNode(idx_val.value));
@@ -294,10 +313,11 @@
                                                                 div = document.createElement('div');
                                                                 a = document.createElement('a');
                                                                 input = document.createElement('input');
+                                                                label = document.createElement('label');
 
                                                             a.appendChild(document.createTextNode(idx_val.index.name));
                                                             a.href = opinions_url.replace(':idx', idx_val.index.id);
-
+/*
                                                             input.type="checkbox";
                                                             input.name = "favourites";
                                                             input.classList.add("favs_checkbox");
@@ -307,6 +327,23 @@
 
                                                             div.appendChild(a);
                                                             div.appendChild(input)
+*/
+                                                            input.type="checkbox";
+                                                            input.name = "favourites";
+                                                            input.value = idx_val.index.id;
+                                                            input.classList.add("form-check-input");
+                                                            input.classList.add("favs_checkbox");
+                                                            input.id="flexSwitchCheckDefault";
+                                                            if(favourites.includes(idx_val.index.id))input.checked=true;
+
+                                                            label.classList.add("form-check-label");
+                                                            label.setAttribute("for", "flexSwitchCheckDefault");
+                                                            label.appendChild(a);
+
+                                                            div.classList.add("form-check");
+                                                            div.classList.add("form-switch");
+                                                            div.appendChild(input);
+                                                            div.appendChild(label);
 
                                                             row.insertCell().appendChild(div);
                                                             row.insertCell().appendChild(document.createTextNode(idx_val.value));

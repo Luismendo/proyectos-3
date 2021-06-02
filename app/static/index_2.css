@@ -41,3 +41,11 @@
 .card {
     border: 0px solid;
 }
+
+.dabid_visval_las_2_con_v {
+    transition: transform 0.5s;
+}
+
+.dabid_visval_las_2_con_v:hover {
+    transform: rotate(734deg);
+}

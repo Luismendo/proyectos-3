@@ -59,8 +59,8 @@ def get_index_opinions_range(index):
 
 @indexes.route('/<index>')
 def get_index_opinions(index):
-    dtt=datetime.datetime.today() - datetime.timedelta(days=30)
-    dtt=dtt.strftime("%a, %d %b %Y")
+    dtt=datetime.datetime.today()
+    dtt=dtt.strftime("%a, 23 %b %Y")
 
     dtt=dtt.replace(',','')
     selected_date = time.strftime("%Y-%m-%d", time.strptime(dtt, "%a %d %b %Y"))

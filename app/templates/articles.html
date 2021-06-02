@@ -13,7 +13,7 @@
                                 <p class="card-text text-danger">No hay artículos disponibles</p>
                             {% endif %}
                             {% for article in articles %}
-                                <div class="card m-3 bg-dark">
+                                <div class="card m-3 bg-dark animate">
                                     <div class="card-header">
                                         <h5 class="card-title mb-0">
                                             <a class="text-warning" href="{{ article.url }}">
@@ -32,5 +32,35 @@
                     </div>
 
                 </div>
+                <style>
+                .animate:hover{
+                  -webkit-animation: tiembla 0.3s infinite;
+                }
+                @-webkit-keyframes tiembla{
+                  0%  { -webkit-transform:rotateZ(-1deg); }
+                  50% { -webkit-transform:rotateZ( 0deg) scale(0.95); }
+                  100%{ -webkit-transform:rotateZ( 1deg); }
+                }
+
+                </style>
 {% endblock %}
+
+<!--
+                    .animate {
+                        height: 150px;
+                        transition: height 2s;
+                    }
+
+                    .animate:hover {
+                        height: 200px;
+                    }
+
+                    .animate {
+                        transition: transform 2s;
+                    }
+
+                    .animate:hover {
+                        transform: rotate(180deg);
+                    }
+-->
 
